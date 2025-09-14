@@ -6,19 +6,19 @@ class ApplicationController < ActionController::Base
 
   def self.inherited(subclass)
     super
-    controller_name = subclass.name.underscore.gsub('_controller', '')
-    helper_name = controller_name.split('/').last
-    
+    controller_name = subclass.name.underscore.gsub("_controller", "")
+    helper_name = controller_name.split("/").last
+
     # Always include application helper
     subclass.helper :application
-    
+
     # Include controller-specific helper if it exists
     if File.exist?(Rails.root.join("app/helpers/#{helper_name}_helper.rb"))
       subclass.helper helper_name.to_sym
     end
-    
+
     # Include projects helper for controllers that need project-related functionality
-    if ['dashboard'].include?(helper_name) && File.exist?(Rails.root.join("app/helpers/projects_helper.rb"))
+    if ["dashboard"].include?(helper_name) && File.exist?(Rails.root.join("app/helpers/projects_helper.rb"))
       subclass.helper :projects
     end
   end

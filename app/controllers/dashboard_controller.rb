@@ -1,21 +1,21 @@
 # app/controllers/dashboard_controller.rb
-require 'rake'
+require "rake"
 
 class DashboardController < ApplicationController
   def index
     @projects = Project.includes(test_runs: []).all
     @recent_test_runs = TestRun.joins(:project)
-                              .order(ran_at: :desc)
-                              .limit(10)
-                              .includes(:project)
-    @project_run_counts = Hash[@projects.map { |p| [p.id, p.test_runs.count] }]
+      .order(ran_at: :desc)
+      .limit(10)
+      .includes(:project)
+    @project_run_counts = @projects.map { |p| [p.id, p.test_runs.count] }.to_h
   end
 
   def generate_sample_data
     begin
       Rake::Task.clear
       Rails.application.load_tasks
-      task = Rake::Task['sample_data:generate']
+      task = Rake::Task["sample_data:generate"]
       task.invoke
       flash[:notice] = "Sample data generated successfully!"
     rescue => e
@@ -31,7 +31,7 @@ class DashboardController < ApplicationController
     begin
       Rake::Task.clear
       Rails.application.load_tasks
-      task = Rake::Task['sample_data:clear']
+      task = Rake::Task["sample_data:clear"]
       task.invoke
       flash[:notice] = "Sample data cleared successfully!"
     rescue => e
@@ -42,5 +42,4 @@ class DashboardController < ApplicationController
 
     redirect_to root_path
   end
-
 end

@@ -18,7 +18,7 @@ RSpec.describe "API V1 TestRuns", type: :request do
 
   describe "POST /api/v1/test_runs" do
     context "with valid API key" do
-      let(:headers) { { "X-API-Key" => project.api_key } }
+      let(:headers) { {"X-API-Key" => project.api_key} }
 
       it "creates a new test run" do
         expect {
@@ -41,7 +41,7 @@ RSpec.describe "API V1 TestRuns", type: :request do
       it "stores all test run attributes" do
         post "/api/v1/test_runs", params: valid_attributes, headers: headers
         test_run = TestRun.last
-        
+
         expect(test_run.commit_sha).to eq("abc123")
         expect(test_run.branch).to eq("main")
         expect(test_run.ruby_specs).to eq(100)
@@ -60,7 +60,7 @@ RSpec.describe "API V1 TestRuns", type: :request do
     end
 
     context "with invalid API key" do
-      let(:headers) { { "X-API-Key" => "invalid-key" } }
+      let(:headers) { {"X-API-Key" => "invalid-key"} }
 
       it "returns unauthorized error" do
         post "/api/v1/test_runs", params: valid_attributes, headers: headers
@@ -76,14 +76,14 @@ RSpec.describe "API V1 TestRuns", type: :request do
     end
 
     context "with invalid parameters" do
-      let(:headers) { { "X-API-Key" => project.api_key } }
-      let(:invalid_attributes) { { test_run: { branch: "" } } }
+      let(:headers) { {"X-API-Key" => project.api_key} }
+      let(:invalid_attributes) { {test_run: {branch: ""}} }
 
       it "creates test run even with minimal data" do
         expect {
           post "/api/v1/test_runs", params: invalid_attributes, headers: headers
         }.to change(TestRun, :count).by(1)
-        
+
         expect(response).to be_successful
       end
     end

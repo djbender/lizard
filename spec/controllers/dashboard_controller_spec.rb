@@ -24,7 +24,7 @@ RSpec.describe "Dashboard", type: :request do
       it "displays recent test run data" do
         get root_path
         expect(response.body).to include("85.0%")
-        expect(response.body).to include("90.0%") 
+        expect(response.body).to include("90.0%")
         expect(response.body).to include("75.0%")
       end
 
@@ -51,13 +51,13 @@ RSpec.describe "Dashboard", type: :request do
     it "invokes the sample data rake task" do
       task_double = double
       allow(Rails.application).to receive(:load_tasks)
-      allow(Rake::Task).to receive(:[]).with('sample_data:generate').and_return(task_double)
-      allow(Rake::Task).to receive(:task_defined?).with('sample_data:generate').and_return(true)
+      allow(Rake::Task).to receive(:[]).with("sample_data:generate").and_return(task_double)
+      allow(Rake::Task).to receive(:task_defined?).with("sample_data:generate").and_return(true)
       expect(task_double).to receive(:invoke)
       expect(task_double).to receive(:reenable)
-      
+
       post generate_sample_data_path
-      
+
       expect(response).to redirect_to(root_path)
       expect(flash[:notice]).to eq("Sample data generated successfully!")
     end
@@ -65,13 +65,13 @@ RSpec.describe "Dashboard", type: :request do
     it "handles rake task errors gracefully" do
       task_double = double
       allow(Rails.application).to receive(:load_tasks)
-      allow(Rake::Task).to receive(:[]).with('sample_data:generate').and_return(task_double)
+      allow(Rake::Task).to receive(:[]).with("sample_data:generate").and_return(task_double)
       allow(task_double).to receive(:invoke).and_raise(StandardError.new("Test error"))
       allow(task_double).to receive(:reenable)
-      allow(Rake::Task).to receive(:task_defined?).with('sample_data:generate').and_return(true)
-      
+      allow(Rake::Task).to receive(:task_defined?).with("sample_data:generate").and_return(true)
+
       post generate_sample_data_path
-      
+
       expect(response).to redirect_to(root_path)
       expect(flash[:alert]).to eq("Error generating sample data: Test error")
     end
@@ -79,9 +79,9 @@ RSpec.describe "Dashboard", type: :request do
     it "always reenables the rake task" do
       task_double = double
       allow(Rails.application).to receive(:load_tasks)
-      allow(Rake::Task).to receive(:[]).with('sample_data:generate').and_return(task_double)
+      allow(Rake::Task).to receive(:[]).with("sample_data:generate").and_return(task_double)
       allow(task_double).to receive(:invoke)
-      allow(Rake::Task).to receive(:task_defined?).with('sample_data:generate').and_return(true)
+      allow(Rake::Task).to receive(:task_defined?).with("sample_data:generate").and_return(true)
       expect(task_double).to receive(:reenable)
 
       post generate_sample_data_path
@@ -101,13 +101,13 @@ RSpec.describe "Dashboard", type: :request do
     it "invokes the clear sample data rake task" do
       task_double = double
       allow(Rails.application).to receive(:load_tasks)
-      allow(Rake::Task).to receive(:[]).with('sample_data:clear').and_return(task_double)
-      allow(Rake::Task).to receive(:task_defined?).with('sample_data:clear').and_return(true)
+      allow(Rake::Task).to receive(:[]).with("sample_data:clear").and_return(task_double)
+      allow(Rake::Task).to receive(:task_defined?).with("sample_data:clear").and_return(true)
       expect(task_double).to receive(:invoke)
       expect(task_double).to receive(:reenable)
-      
+
       post clear_sample_data_path
-      
+
       expect(response).to redirect_to(root_path)
       expect(flash[:notice]).to eq("Sample data cleared successfully!")
     end
@@ -115,13 +115,13 @@ RSpec.describe "Dashboard", type: :request do
     it "handles rake task errors gracefully" do
       task_double = double
       allow(Rails.application).to receive(:load_tasks)
-      allow(Rake::Task).to receive(:[]).with('sample_data:clear').and_return(task_double)
+      allow(Rake::Task).to receive(:[]).with("sample_data:clear").and_return(task_double)
       allow(task_double).to receive(:invoke).and_raise(StandardError.new("Clear error"))
       allow(task_double).to receive(:reenable)
-      allow(Rake::Task).to receive(:task_defined?).with('sample_data:clear').and_return(true)
-      
+      allow(Rake::Task).to receive(:task_defined?).with("sample_data:clear").and_return(true)
+
       post clear_sample_data_path
-      
+
       expect(response).to redirect_to(root_path)
       expect(flash[:alert]).to eq("Error clearing sample data: Clear error")
     end
@@ -129,9 +129,9 @@ RSpec.describe "Dashboard", type: :request do
     it "always reenables the rake task" do
       task_double = double
       allow(Rails.application).to receive(:load_tasks)
-      allow(Rake::Task).to receive(:[]).with('sample_data:clear').and_return(task_double)
+      allow(Rake::Task).to receive(:[]).with("sample_data:clear").and_return(task_double)
       allow(task_double).to receive(:invoke)
-      allow(Rake::Task).to receive(:task_defined?).with('sample_data:clear').and_return(true)
+      allow(Rake::Task).to receive(:task_defined?).with("sample_data:clear").and_return(true)
       expect(task_double).to receive(:reenable)
 
       post clear_sample_data_path

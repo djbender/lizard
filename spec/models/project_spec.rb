@@ -8,7 +8,7 @@ RSpec.describe Project, type: :model do
 
     it "destroys associated test runs when deleted" do
       project = Project.create!(name: "Test Project")
-      test_run = project.test_runs.create!(
+      project.test_runs.create!(
         branch: "main",
         coverage: 85.5,
         ruby_specs: 100,
@@ -16,7 +16,7 @@ RSpec.describe Project, type: :model do
         runtime: 30.2,
         ran_at: Time.current
       )
-      
+
       expect { project.destroy! }.to change(TestRun, :count).by(-1)
     end
   end

@@ -2,7 +2,7 @@ require "rails_helper"
 
 RSpec.describe TestRun, type: :model do
   let(:project) { Project.new(name: "Test Project") }
-  
+
   describe "associations" do
     it "belongs to project" do
       expect(TestRun.new).to respond_to(:project)

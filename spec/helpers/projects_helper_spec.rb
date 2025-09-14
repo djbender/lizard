@@ -1,4 +1,4 @@
-require 'rails_helper'
+require "rails_helper"
 
 RSpec.describe ProjectsHelper, type: :helper do
   let!(:project) { Project.create!(name: "Test Project") }
@@ -7,7 +7,7 @@ RSpec.describe ProjectsHelper, type: :helper do
 
   before do
     # Set up the project run counts as the controller would
-    @project_run_counts = { project.id => 2 }
+    @project_run_counts = {project.id => 2}
   end
 
   describe "#run_count_for_project" do

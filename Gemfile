@@ -54,7 +54,7 @@ group :development do
   # Use console on exceptions pages [https://github.com/rails/web-console]
   gem "web-console"
   gem "spring"
-  gem 'spring-commands-rspec'
+  gem "spring-commands-rspec"
 end
 
 group :test do

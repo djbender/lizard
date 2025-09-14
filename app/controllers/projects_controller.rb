@@ -1,7 +1,7 @@
 class ProjectsController < ApplicationController
   def index
     @projects = Project.includes(test_runs: []).all
-    @project_run_counts = Hash[@projects.map { |p| [p.id, p.test_runs.count] }]
+    @project_run_counts = @projects.map { |p| [p.id, p.test_runs.count] }.to_h
   end
 
   def new

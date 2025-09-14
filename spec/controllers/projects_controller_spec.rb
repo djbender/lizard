@@ -1,8 +1,8 @@
 require "rails_helper"
 
 RSpec.describe "Projects", type: :request do
-  let(:valid_attributes) { { name: "Test Project" } }
-  let(:invalid_attributes) { { name: "" } }
+  let(:valid_attributes) { {name: "Test Project"} }
+  let(:invalid_attributes) { {name: ""} }
   let!(:project) { Project.create!(valid_attributes) }
 
   describe "GET /projects" do
@@ -61,12 +61,12 @@ RSpec.describe "Projects", type: :request do
     context "with valid params" do
       it "creates a new Project" do
         expect {
-          post projects_path, params: { project: valid_attributes }
+          post projects_path, params: {project: valid_attributes}
         }.to change(Project, :count).by(1)
       end
 
       it "redirects to the created project" do
-        post projects_path, params: { project: valid_attributes }
+        post projects_path, params: {project: valid_attributes}
         expect(response).to redirect_to(Project.last)
       end
     end
@@ -74,17 +74,17 @@ RSpec.describe "Projects", type: :request do
     context "with invalid params" do
       it "does not create a new Project" do
         expect {
-          post projects_path, params: { project: invalid_attributes }
+          post projects_path, params: {project: invalid_attributes}
         }.not_to change(Project, :count)
       end
 
       it "returns unprocessable content status" do
-        post projects_path, params: { project: invalid_attributes }
+        post projects_path, params: {project: invalid_attributes}
         expect(response).to have_http_status(:unprocessable_content)
       end
 
       it "displays validation errors" do
-        post projects_path, params: { project: invalid_attributes }
+        post projects_path, params: {project: invalid_attributes}
         expect(response.body).to include("Name can&#39;t be blank")
       end
     end
@@ -92,28 +92,28 @@ RSpec.describe "Projects", type: :request do
 
   describe "PATCH /projects/:id" do
     context "with valid params" do
-      let(:new_attributes) { { name: "Updated Project Name" } }
+      let(:new_attributes) { {name: "Updated Project Name"} }
 
       it "updates the requested project" do
-        patch project_path(project), params: { project: new_attributes }
+        patch project_path(project), params: {project: new_attributes}
         project.reload
         expect(project.name).to eq("Updated Project Name")
       end
 
       it "redirects to the project" do
-        patch project_path(project), params: { project: new_attributes }
+        patch project_path(project), params: {project: new_attributes}
         expect(response).to redirect_to(project)
       end
     end
 
     context "with invalid params" do
       it "returns unprocessable content status" do
-        patch project_path(project), params: { project: invalid_attributes }
+        patch project_path(project), params: {project: invalid_attributes}
         expect(response).to have_http_status(:unprocessable_content)
       end
 
       it "displays validation errors" do
-        patch project_path(project), params: { project: invalid_attributes }
+        patch project_path(project), params: {project: invalid_attributes}
         expect(response.body).to include("Name can&#39;t be blank")
       end
     end
@@ -131,16 +131,16 @@ RSpec.describe "Projects", type: :request do
     it "returns metrics data" do
       get metrics_project_path(project)
       json_response = JSON.parse(response.body)
-      
+
       expect(json_response).to have_key("labels")
       expect(json_response).to have_key("datasets")
       expect(json_response["datasets"].size).to eq(3)
     end
 
     it "filters by days parameter" do
-      get metrics_project_path(project), params: { days: 7 }
+      get metrics_project_path(project), params: {days: 7}
       json_response = JSON.parse(response.body)
-      
+
       expect(json_response["labels"].size).to eq(1) # Only test_run2 within 7 days
     end
   end

@@ -9,7 +9,7 @@ RSpec.describe "Dashboard", type: :system do
   describe "visiting the front page" do
     it "displays the dashboard page" do
       visit root_path
-      
+
       aggregate_failures do
         expect(page).to have_content("🦎 Lizard - Metrics Dashboard")
         expect(page).to have_button("Generate Sample Data")
@@ -18,7 +18,7 @@ RSpec.describe "Dashboard", type: :system do
 
     it "shows no projects message when no projects exist" do
       visit root_path
-      
+
       aggregate_failures do
         expect(page).to have_content("No projects yet")
         expect(page).to have_content("Create your first project to start tracking test metrics")
@@ -36,9 +36,9 @@ RSpec.describe "Dashboard", type: :system do
         runtime: 30.0,
         ran_at: 1.hour.ago
       )
-      
+
       visit root_path
-      
+
       aggregate_failures do
         expect(page).to have_content("Test Project")
         expect(page).to have_content("85.0%")
@@ -53,7 +53,7 @@ RSpec.describe "Dashboard", type: :system do
   describe "sample data buttons" do
     it "shows both generate and clear sample data buttons" do
       visit root_path
-      
+
       aggregate_failures do
         expect(page).to have_button("Generate Sample Data")
         expect(page).to have_button("Clear Sample Data")
@@ -64,10 +64,10 @@ RSpec.describe "Dashboard", type: :system do
       allow(Rails.application).to receive(:load_tasks)
       allow(Rake::Task).to receive(:[]).and_return(double(invoke: nil, reenable: nil))
       allow(Rake::Task).to receive(:task_defined?).and_return(true)
-      
+
       visit root_path
       click_button "Generate Sample Data"
-      
+
       aggregate_failures do
         expect(page).to have_content("Sample data generated successfully!")
         expect(page).to have_current_path(root_path)
@@ -78,10 +78,10 @@ RSpec.describe "Dashboard", type: :system do
       allow(Rails.application).to receive(:load_tasks)
       allow(Rake::Task).to receive(:[]).and_return(double(invoke: nil, reenable: nil))
       allow(Rake::Task).to receive(:task_defined?).and_return(true)
-      
+
       visit root_path
       click_button "Clear Sample Data"
-      
+
       aggregate_failures do
         expect(page).to have_content("Sample data cleared successfully!")
         expect(page).to have_current_path(root_path)
