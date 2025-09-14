@@ -83,8 +83,17 @@ RSpec.describe "Dashboard", type: :request do
       allow(task_double).to receive(:invoke)
       allow(Rake::Task).to receive(:task_defined?).with('sample_data:generate').and_return(true)
       expect(task_double).to receive(:reenable)
-      
+
       post generate_sample_data_path
+    end
+
+    it "handles task variable being nil when load_tasks fails" do
+      allow(Rails.application).to receive(:load_tasks).and_raise(StandardError.new("Load tasks error"))
+
+      post generate_sample_data_path
+
+      expect(response).to redirect_to(root_path)
+      expect(flash[:alert]).to eq("Error generating sample data: Load tasks error")
     end
   end
 
@@ -124,8 +133,17 @@ RSpec.describe "Dashboard", type: :request do
       allow(task_double).to receive(:invoke)
       allow(Rake::Task).to receive(:task_defined?).with('sample_data:clear').and_return(true)
       expect(task_double).to receive(:reenable)
-      
+
       post clear_sample_data_path
+    end
+
+    it "handles task variable being nil when load_tasks fails" do
+      allow(Rails.application).to receive(:load_tasks).and_raise(StandardError.new("Load tasks error"))
+
+      post clear_sample_data_path
+
+      expect(response).to redirect_to(root_path)
+      expect(flash[:alert]).to eq("Error clearing sample data: Load tasks error")
     end
   end
 end

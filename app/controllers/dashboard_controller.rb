@@ -15,10 +15,13 @@ class DashboardController < ApplicationController
     begin
       Rake::Task.clear
       Rails.application.load_tasks
-      Rake::Task['sample_data:generate'].invoke
+      task = Rake::Task['sample_data:generate']
+      task.invoke
       flash[:notice] = "Sample data generated successfully!"
     rescue => e
       flash[:alert] = "Error generating sample data: #{e.message}"
+    ensure
+      task&.reenable
     end
 
     redirect_to root_path
@@ -28,10 +31,13 @@ class DashboardController < ApplicationController
     begin
       Rake::Task.clear
       Rails.application.load_tasks
-      Rake::Task['sample_data:clear'].invoke
+      task = Rake::Task['sample_data:clear']
+      task.invoke
       flash[:notice] = "Sample data cleared successfully!"
     rescue => e
       flash[:alert] = "Error clearing sample data: #{e.message}"
+    ensure
+      task&.reenable
     end
 
     redirect_to root_path

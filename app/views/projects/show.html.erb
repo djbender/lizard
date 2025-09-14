@@ -1,6 +1,34 @@
 <% content_for :title, "#{@project.name} - Test Metrics" %>
 
 <section>
+  <h1><%= @project.name %></h1>
+
+  <div class="project-details">
+    <h2>Project Details</h2>
+    <table>
+      <tbody>
+        <tr>
+          <td><strong>Name:</strong></td>
+          <td><%= @project.name %></td>
+        </tr>
+        <tr>
+          <td><strong>API Key:</strong></td>
+          <td><%= @project.api_key %></td>
+        </tr>
+        <tr>
+          <td><strong>Created:</strong></td>
+          <td><%= @project.created_at.strftime('%Y-%m-%d %H:%M:%S') %></td>
+        </tr>
+        <tr>
+          <td><strong>Updated:</strong></td>
+          <td><%= @project.updated_at.strftime('%Y-%m-%d %H:%M:%S') %></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section>
   <canvas id="metricsChart"></canvas>
 </section>
 
