@@ -20,7 +20,14 @@
 </head>
 <body>
   <header>
-    <%= content_for?(:header) ? yield(:header) : content_tag(:h1, content_for(:title) || "Lizard") %>
+    <% if content_for?(:header) %>
+      <%= yield(:header) %>
+    <% else %>
+      <h1 style="display: inline-block; margin-right: 2rem;"><%= link_to "🦎 Lizard", root_path, class: "title-link" %></h1>
+      <nav style="display: inline-block;">
+        <%= link_to "Projects", projects_path %>
+      </nav>
+    <% end %>
   </header>
 
   <main>
@@ -34,6 +41,7 @@
   </main>
 
   <footer>
+    <%= yield(:footer) if content_for?(:footer) %>
     <p>&copy; <%= Date.current.year %> Lizard</p>
   </footer>
 </body>

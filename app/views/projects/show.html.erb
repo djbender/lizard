@@ -1,5 +1,17 @@
 <% content_for :title, "#{@project.name} - Test Metrics" %>
 
+<section style="width: 100vw; margin-left: calc(-50vw + 50%); padding: 0 2rem;">
+  <nav aria-label="breadcrumb">
+    <%= link_to "Dashboard", root_path %> →
+    <%= link_to "Projects", projects_path %> →
+    <%= @project.name %>
+  </nav>
+</section>
+
+<section style="width: 100vw; margin-left: calc(-50vw + 50%); margin-bottom: 2rem;">
+  <canvas id="metricsChart"></canvas>
+</section>
+
 <section>
   <h1><%= @project.name %></h1>
 
@@ -26,10 +38,6 @@
       </tbody>
     </table>
   </div>
-</section>
-
-<section>
-  <canvas id="metricsChart"></canvas>
 </section>
 
 <section>

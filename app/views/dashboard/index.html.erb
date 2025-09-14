@@ -1,14 +1,9 @@
 <% content_for :title, "Dashboard" %>
 <% content_for :header do %>
-  <h1>🦎 Lizard - Metrics Dashboard</h1>
-  <p>
-    <%= form_with url: generate_sample_data_path, method: :post, local: true, style: "display: inline-block; margin-right: 1rem;" do |form| %>
-      <%= form.submit "Generate Sample Data", confirm: "This will create test data for the 'Test Project'. Continue?" %>
-    <% end %>
-    <%= form_with url: clear_sample_data_path, method: :post, local: true, style: "display: inline-block;" do |form| %>
-      <%= form.submit "Clear Sample Data", confirm: "This will remove all test data for the 'Test Project'. Continue?" %>
-    <% end %>
-  </p>
+  <h1 style="display: inline-block; margin-right: 2rem;"><%= link_to "🦎 Lizard", root_path, class: "title-link" %></h1>
+  <nav style="display: inline-block;">
+    <%= link_to "Projects", projects_path %>
+  </nav>
 <% end %>
 
 <% @projects.each do |project| %>
@@ -93,5 +88,19 @@
         <% end %>
       </tbody>
     </table>
+  </section>
+<% end %>
+
+<% content_for :footer do %>
+  <section style="border-top: 1px solid #ccc; margin-top: 2rem; padding-top: 1rem;">
+    <h3>Development Only</h3>
+    <div style="display: flex; gap: 1rem;">
+      <%= form_with url: generate_sample_data_path, method: :post, local: true do |form| %>
+        <%= form.submit "Generate Sample Data", confirm: "This will create test data for the 'Test Project'. Continue?" %>
+      <% end %>
+      <%= form_with url: clear_sample_data_path, method: :post, local: true do |form| %>
+        <%= form.submit "Clear Sample Data", confirm: "This will remove all test data for the 'Test Project'. Continue?" %>
+      <% end %>
+    </div>
   </section>
 <% end %>
