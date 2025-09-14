@@ -3,6 +3,7 @@ class ApplicationController < ActionController::Base
   allow_browser versions: :modern
 
   clear_helpers
+  helper Importmap::ImportmapTagsHelper
 
   def self.inherited(subclass)
     super
