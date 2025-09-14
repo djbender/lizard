@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><%= content_for(:title) || "Test Chronicler" %></title>
+    <title><%= content_for(:title) || "Lizard" %></title>
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
 
@@ -19,7 +19,7 @@
 </head>
 <body>
   <header>
-    <%= content_for?(:header) ? yield(:header) : content_tag(:h1, content_for(:title) || "Test Chronicler") %>
+    <%= content_for?(:header) ? yield(:header) : content_tag(:h1, content_for(:title) || "Lizard") %>
   </header>
 
   <main>
@@ -27,7 +27,7 @@
   </main>
 
   <footer>
-    <p>&copy; <%= Date.current.year %> Test Chronicler</p>
+    <p>&copy; <%= Date.current.year %> Lizard</p>
   </footer>
 </body>
 </html>
