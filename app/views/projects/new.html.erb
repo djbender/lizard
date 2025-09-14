@@ -1,0 +1,25 @@
+<% content_for :title, "Create New Project" %>
+
+<%= form_with model: @project, local: true do |form| %>
+  <% if @project.errors.any? %>
+    <aside>
+      <p><%= pluralize(@project.errors.count, "error") %> prohibited this project from being saved:</p>
+      <ul>
+        <% @project.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </aside>
+  <% end %>
+
+  <p>
+    <%= form.label :name %>
+    <%= form.text_field :name, placeholder: "My Awesome Project" %>
+  </p>
+
+
+  <p>
+    <%= link_to "Cancel", root_path %>
+    <%= form.submit "Create Project" %>
+  </p>
+<% end %>

@@ -1,0 +1,80 @@
+<% content_for :title, "#{@project.name} - Test Metrics" %>
+
+<section>
+  <canvas id="metricsChart"></canvas>
+</section>
+
+<section>
+  <h2>Recent Test Runs</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Date</th>
+        <th>Branch</th>
+        <th>Ruby Specs</th>
+        <th>JS Specs</th>
+        <th>Coverage</th>
+        <th>Runtime</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @recent_runs.each do |run| %>
+        <tr>
+          <td><%= run.ran_at.strftime('%Y-%m-%d %H:%M') %></td>
+          <td><%= run.branch %></td>
+          <td><%= run.ruby_specs %></td>
+          <td><%= run.js_specs %></td>
+          <td><%= number_to_percentage(run.coverage, precision: 1) %></td>
+          <td><%= number_with_precision(run.runtime, precision: 1) %>s</td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</section>
+
+<script>
+  fetch('<%= metrics_project_path(@project) %>')
+    .then(response => response.json())
+    .then(data => {
+      const ctx = document.getElementById('metricsChart').getContext('2d');
+      new Chart(ctx, {
+        type: 'line',
+        data: data,
+        options: {
+          responsive: true,
+          interaction: {
+            mode: 'index',
+            intersect: false,
+          },
+          scales: {
+            y: {
+              type: 'linear',
+              display: true,
+              position: 'left',
+              title: {
+                display: true,
+                text: 'Coverage %'
+              }
+            },
+            y1: {
+              type: 'linear',
+              display: true,
+              position: 'right',
+              title: {
+                display: true,
+                text: 'Spec Count'
+              },
+              grid: {
+                drawOnChartArea: false,
+              },
+            },
+            y2: {
+              type: 'linear',
+              display: false,
+              position: 'right',
+            }
+          }
+        }
+      });
+    });
+</script>
