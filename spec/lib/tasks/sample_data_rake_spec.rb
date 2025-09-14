@@ -37,7 +37,7 @@ RSpec.describe 'sample_data rake tasks', type: :task do
       expect { Rake::Task['sample_data:generate'].invoke }.to change { project.test_runs.count }.by(30)
     end
 
-    it 'generates test runs with realistic data ranges' do
+    it 'generates test runs with realistic monotonic growth ranges' do
       Rake::Task['sample_data:generate'].invoke
       
       project = Project.find_by(name: 'Test Project')
@@ -46,14 +46,90 @@ RSpec.describe 'sample_data rake tasks', type: :task do
       expect(test_runs.count).to eq(30)
       
       aggregate_failures do
-        expect(test_runs.minimum(:coverage)).to be >= 0
-        expect(test_runs.maximum(:coverage)).to be <= 100
-        expect(test_runs.minimum(:ruby_specs)).to be >= 60  # 80 - 20 for bad runs
+        expect(test_runs.minimum(:coverage)).to be >= 65.0
+        expect(test_runs.maximum(:coverage)).to be <= 95.0
+        expect(test_runs.minimum(:ruby_specs)).to be >= 50
         expect(test_runs.maximum(:ruby_specs)).to be <= 120
-        expect(test_runs.minimum(:js_specs)).to be >= 30
+        expect(test_runs.minimum(:js_specs)).to be >= 20
         expect(test_runs.maximum(:js_specs)).to be <= 60
-        expect(test_runs.minimum(:runtime)).to be >= 20.0
-        expect(test_runs.maximum(:runtime)).to be <= 80.0   # 60 + 20 for bad runs
+        expect(test_runs.minimum(:runtime)).to be >= 15.0
+        expect(test_runs.maximum(:runtime)).to be <= 45.0
+      end
+    end
+
+    it 'generates test runs with realistic monotonic growth over time' do
+      Rake::Task['sample_data:generate'].invoke
+      
+      project = Project.find_by(name: 'Test Project')
+      test_runs = project.test_runs.order(:ran_at)
+      
+      oldest_run = test_runs.first
+      newest_run = test_runs.last
+      
+      aggregate_failures do
+        # Coverage should grow from oldest to newest (project improves over time)
+        expect(oldest_run.coverage).to be_within(1.0).of(65.0)
+        expect(newest_run.coverage).to be_within(1.0).of(95.0)
+        
+        # Ruby specs should grow from oldest to newest (more tests added)
+        expect(oldest_run.ruby_specs).to be_within(2).of(50)
+        expect(newest_run.ruby_specs).to be_within(3).of(120)
+        
+        # JS specs should grow from oldest to newest (more frontend tests)
+        expect(oldest_run.js_specs).to be_within(2).of(20)
+        expect(newest_run.js_specs).to be_within(2).of(60)
+        
+        # Runtime should increase from oldest to newest (more tests = longer runtime)
+        expect(oldest_run.runtime).to be_within(1.0).of(15.0)
+        expect(newest_run.runtime).to be_within(1.0).of(45.0)
+      end
+    end
+
+    it 'generates test runs with purely linear growth (no variations, no sine wave pattern)' do
+      Rake::Task['sample_data:generate'].invoke
+      
+      project = Project.find_by(name: 'Test Project')
+      test_runs = project.test_runs.order(:ran_at)
+      
+      # Check that the growth has very consistent absolute increments (linear growth)
+      coverage_increments = []
+      runtime_increments = []
+      
+      (0...test_runs.count - 1).each do |i|
+        current = test_runs[i]
+        next_run = test_runs[i + 1]
+        
+        coverage_increment = (next_run.coverage - current.coverage).round(2)
+        runtime_increment = (next_run.runtime - current.runtime).round(2)
+        
+        coverage_increments << coverage_increment
+        runtime_increments << runtime_increment
+      end
+      
+      aggregate_failures do
+        # Coverage should have very consistent absolute daily increments (linear growth)
+        expect(coverage_increments.uniq.length).to be <= 3  # Should be only 1-2 different values due to rounding
+        
+        # Runtime should have very consistent absolute daily increments (linear growth)
+        expect(runtime_increments.uniq.length).to be <= 3  # Should be only 1-2 different values due to rounding
+        
+        # Integer values (specs) may have small rounding variations but should be minimal
+        ruby_changes = []
+        js_changes = []
+        (0...test_runs.count - 1).each do |i|
+          current = test_runs[i]
+          next_run = test_runs[i + 1]
+          
+          ruby_change = (next_run.ruby_specs - current.ruby_specs).abs
+          js_change = (next_run.js_specs - current.js_specs).abs
+          
+          ruby_changes << ruby_change
+          js_changes << js_change
+        end
+        
+        # Should have very consistent increments (mostly 2-3 per day)
+        expect(ruby_changes.max).to be <= 3  # Small consistent increments
+        expect(js_changes.max).to be <= 2   # Small consistent increments
       end
     end
 

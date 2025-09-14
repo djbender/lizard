@@ -1,7 +1,14 @@
 <% content_for :title, "Dashboard" %>
 <% content_for :header do %>
-  <h1>Test Metrics Dashboard</h1>
-  <p><%= link_to "New Project", new_project_path %></p>
+  <h1>🦎 Lizard - Metrics Dashboard</h1>
+  <p>
+    <%= form_with url: generate_sample_data_path, method: :post, local: true, style: "display: inline-block; margin-right: 1rem;" do |form| %>
+      <%= form.submit "Generate Sample Data", confirm: "This will create test data for the 'Test Project'. Continue?" %>
+    <% end %>
+    <%= form_with url: clear_sample_data_path, method: :post, local: true, style: "display: inline-block;" do |form| %>
+      <%= form.submit "Clear Sample Data", confirm: "This will remove all test data for the 'Test Project'. Continue?" %>
+    <% end %>
+  </p>
 <% end %>
 
 <% @projects.each do |project| %>

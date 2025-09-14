@@ -1,4 +1,5 @@
 require "rails_helper"
+require "rake"
 
 RSpec.describe "Dashboard", type: :request do
   describe "GET /" do
@@ -29,7 +30,7 @@ RSpec.describe "Dashboard", type: :request do
 
       it "renders dashboard title" do
         get root_path
-        expect(response.body).to include("Test Metrics Dashboard")
+        expect(response.body).to include("🦎 Lizard - Metrics Dashboard")
       end
     end
 
@@ -43,6 +44,88 @@ RSpec.describe "Dashboard", type: :request do
         get root_path
         expect(response.body).to include("No projects yet")
       end
+    end
+  end
+
+  describe "POST /generate_sample_data" do
+    it "invokes the sample data rake task" do
+      task_double = double
+      allow(Rails.application).to receive(:load_tasks)
+      allow(Rake::Task).to receive(:[]).with('sample_data:generate').and_return(task_double)
+      allow(Rake::Task).to receive(:task_defined?).with('sample_data:generate').and_return(true)
+      expect(task_double).to receive(:invoke)
+      expect(task_double).to receive(:reenable)
+      
+      post generate_sample_data_path
+      
+      expect(response).to redirect_to(root_path)
+      expect(flash[:notice]).to eq("Sample data generated successfully!")
+    end
+
+    it "handles rake task errors gracefully" do
+      task_double = double
+      allow(Rails.application).to receive(:load_tasks)
+      allow(Rake::Task).to receive(:[]).with('sample_data:generate').and_return(task_double)
+      allow(task_double).to receive(:invoke).and_raise(StandardError.new("Test error"))
+      allow(task_double).to receive(:reenable)
+      allow(Rake::Task).to receive(:task_defined?).with('sample_data:generate').and_return(true)
+      
+      post generate_sample_data_path
+      
+      expect(response).to redirect_to(root_path)
+      expect(flash[:alert]).to eq("Error generating sample data: Test error")
+    end
+
+    it "always reenables the rake task" do
+      task_double = double
+      allow(Rails.application).to receive(:load_tasks)
+      allow(Rake::Task).to receive(:[]).with('sample_data:generate').and_return(task_double)
+      allow(task_double).to receive(:invoke)
+      allow(Rake::Task).to receive(:task_defined?).with('sample_data:generate').and_return(true)
+      expect(task_double).to receive(:reenable)
+      
+      post generate_sample_data_path
+    end
+  end
+
+  describe "POST /clear_sample_data" do
+    it "invokes the clear sample data rake task" do
+      task_double = double
+      allow(Rails.application).to receive(:load_tasks)
+      allow(Rake::Task).to receive(:[]).with('sample_data:clear').and_return(task_double)
+      allow(Rake::Task).to receive(:task_defined?).with('sample_data:clear').and_return(true)
+      expect(task_double).to receive(:invoke)
+      expect(task_double).to receive(:reenable)
+      
+      post clear_sample_data_path
+      
+      expect(response).to redirect_to(root_path)
+      expect(flash[:notice]).to eq("Sample data cleared successfully!")
+    end
+
+    it "handles rake task errors gracefully" do
+      task_double = double
+      allow(Rails.application).to receive(:load_tasks)
+      allow(Rake::Task).to receive(:[]).with('sample_data:clear').and_return(task_double)
+      allow(task_double).to receive(:invoke).and_raise(StandardError.new("Clear error"))
+      allow(task_double).to receive(:reenable)
+      allow(Rake::Task).to receive(:task_defined?).with('sample_data:clear').and_return(true)
+      
+      post clear_sample_data_path
+      
+      expect(response).to redirect_to(root_path)
+      expect(flash[:alert]).to eq("Error clearing sample data: Clear error")
+    end
+
+    it "always reenables the rake task" do
+      task_double = double
+      allow(Rails.application).to receive(:load_tasks)
+      allow(Rake::Task).to receive(:[]).with('sample_data:clear').and_return(task_double)
+      allow(task_double).to receive(:invoke)
+      allow(Rake::Task).to receive(:task_defined?).with('sample_data:clear').and_return(true)
+      expect(task_double).to receive(:reenable)
+      
+      post clear_sample_data_path
     end
   end
 end

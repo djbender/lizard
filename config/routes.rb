@@ -14,4 +14,7 @@ Rails.application.routes.draw do
       get "metrics"
     end
   end
+
+  post "generate_sample_data", to: "dashboard#generate_sample_data"
+  post "clear_sample_data", to: "dashboard#clear_sample_data"
 end
