@@ -8,22 +8,57 @@ namespace :sample_data do
     puts "📁 Project: #{project.name} (ID: #{project.id})" unless Rails.env.test?
     puts "🔑 API Key: #{project.api_key}" unless Rails.env.test?
 
-    # Generate 30 days of test run data
+    # Generate 30 days of test run data with smooth growth (max 3% daily change)
+    # Starting values (oldest data)
+    current_coverage = 65.0
+    current_ruby_specs = 50
+    current_js_specs = 20
+    current_runtime = 15.0
+    
+    # Use linear growth with small random variations to avoid sine wave pattern
+    target_coverage = 95.0
+    target_ruby_specs = 120
+    target_js_specs = 60
+    target_runtime = 45.0
+    
+    # Calculate daily increments for linear growth
+    coverage_daily_increment = (target_coverage - current_coverage) / 29.0
+    ruby_daily_increment = (target_ruby_specs - current_ruby_specs) / 29.0
+    js_daily_increment = (target_js_specs - current_js_specs) / 29.0
+    runtime_daily_increment = (target_runtime - current_runtime) / 29.0
+    
+    # Track previous values to ensure monotonic growth (never goes down)
+    prev_ruby_specs = current_ruby_specs
+    prev_js_specs = current_js_specs
+    
     30.times do |i|
-      days_ago = i
+      days_ago = 29 - i  # Start with oldest data (29 days ago) and work forward
       date = days_ago.days.ago
       
-      # Create realistic test metrics with some variation
-      base_coverage = 75 + rand(25)  # 75-100% coverage
-      ruby_specs = 80 + rand(40)     # 80-120 Ruby specs
-      js_specs = 30 + rand(30)       # 30-60 JS specs
-      runtime = 20.0 + rand(40.0)    # 20-60 seconds runtime
+      # Apply pure linear growth (i: 0=oldest, 29=newest)
+      progress = i  # 0 for oldest, 29 for newest
       
-      # Add some randomness - occasional drops in coverage/performance
-      if rand(10) == 0  # 10% chance of a "bad" run
-        base_coverage -= rand(20)
-        runtime += rand(20.0)
+      # Calculate pure linear progression - no randomness at all
+      base_coverage = current_coverage + (coverage_daily_increment * progress)
+      runtime = current_runtime + (runtime_daily_increment * progress)
+      
+      # For integer values, calculate target and ensure they never decrease
+      target_ruby = (current_ruby_specs + (ruby_daily_increment * progress)).round
+      target_js = (current_js_specs + (js_daily_increment * progress)).round
+      
+      # Only allow increases or staying the same (never go down)
+      if i == 0
+        # First day uses starting values
+        ruby_specs = current_ruby_specs
+        js_specs = current_js_specs
+      else
+        ruby_specs = [target_ruby, prev_ruby_specs].max  # Never decrease
+        js_specs = [target_js, prev_js_specs].max        # Never decrease
       end
+      
+      # Update previous values for next iteration
+      prev_ruby_specs = ruby_specs
+      prev_js_specs = js_specs
       
       # Vary branch names
       branches = ["main", "develop", "feature/user-auth", "feature/api-improvements", "hotfix/security-patch"]
@@ -35,7 +70,7 @@ namespace :sample_data do
         ruby_specs: ruby_specs,
         js_specs: js_specs,
         runtime: runtime.round(2),
-        coverage: base_coverage.clamp(0, 100).round(1),
+        coverage: base_coverage.round(1),
         ran_at: date
       )
       
