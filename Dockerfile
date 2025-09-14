@@ -2,8 +2,8 @@
 # check=error=true
 
 # This Dockerfile is designed for production, not development. Use with Kamal or build'n'run by hand:
-# docker build -t dereks_test_chronicler .
-# docker run -d -p 80:80 -e RAILS_MASTER_KEY=<value from config/master.key> --name dereks_test_chronicler dereks_test_chronicler
+# docker build -t lizard .
+# docker run -d -p 80:80 -e RAILS_MASTER_KEY=<value from config/master.key> --name lizard lizard
 
 # For a containerized dev environment, see Dev Containers: https://guides.rubyonrails.org/getting_started_with_devcontainer.html
 

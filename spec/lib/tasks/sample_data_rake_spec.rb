@@ -88,6 +88,12 @@ RSpec.describe 'sample_data rake tasks', type: :task do
       expect(ran_at_dates.first).to be <= 29.days.ago
       expect(ran_at_dates.last).to be >= Time.current.beginning_of_day
     end
+
+    it 'outputs progress and summary when not in test environment' do
+      allow(Rails.env).to receive(:test?).and_return(false)
+      
+      expect { Rake::Task['sample_data:generate'].invoke }.to output(/🚀 Generating fake data for Test Project/).to_stdout
+    end
   end
 
   describe 'sample_data:clear' do
@@ -107,6 +113,28 @@ RSpec.describe 'sample_data rake tasks', type: :task do
 
     it 'does nothing if Test Project does not exist' do
       expect { Rake::Task['sample_data:clear'].invoke }.not_to raise_error
+    end
+
+    it 'outputs message when not in test environment' do
+      allow(Rails.env).to receive(:test?).and_return(false)
+      
+      expect { Rake::Task['sample_data:clear'].invoke }.to output(/❌ 'Test Project' not found/).to_stdout
+    end
+
+    it 'outputs clear message when project exists and not in test environment' do
+      project = Project.create!(name: 'Test Project')
+      project.test_runs.create!(
+        branch: 'main',
+        coverage: 85.0,
+        ruby_specs: 100,
+        js_specs: 50,
+        runtime: 30.0,
+        ran_at: Time.current
+      )
+      
+      allow(Rails.env).to receive(:test?).and_return(false)
+      
+      expect { Rake::Task['sample_data:clear'].invoke }.to output(/🗑️  Cleared 1 test runs for 'Test Project'/).to_stdout
     end
 
     it 'does not remove the Test Project itself' do

@@ -1,12 +1,12 @@
 namespace :sample_data do
   desc "Generate fake test data for 'Test Project'"
   task generate: :environment do
-    puts "🚀 Generating fake data for Test Project..."
+    puts "🚀 Generating fake data for Test Project..." unless Rails.env.test?
 
     # Create or find the Test Project
     project = Project.find_or_create_by(name: "Test Project")
-    puts "📁 Project: #{project.name} (ID: #{project.id})"
-    puts "🔑 API Key: #{project.api_key}"
+    puts "📁 Project: #{project.name} (ID: #{project.id})" unless Rails.env.test?
+    puts "🔑 API Key: #{project.api_key}" unless Rails.env.test?
 
     # Generate 30 days of test run data
     30.times do |i|
@@ -39,13 +39,15 @@ namespace :sample_data do
         ran_at: date
       )
       
-      print "."
+      print "." unless Rails.env.test?
     end
     
-    puts "\n✅ Generated #{project.test_runs.count} test runs for '#{project.name}'"
-    puts "📊 Coverage range: #{project.test_runs.minimum(:coverage)}% - #{project.test_runs.maximum(:coverage)}%"
-    puts "⏱️  Runtime range: #{project.test_runs.minimum(:runtime)}s - #{project.test_runs.maximum(:runtime).round(1)}s"
-    puts "🧪 Total specs range: #{project.test_runs.minimum('ruby_specs + js_specs')} - #{project.test_runs.maximum('ruby_specs + js_specs')}"
+    unless Rails.env.test?
+      puts "\n✅ Generated #{project.test_runs.count} test runs for '#{project.name}'"
+      puts "📊 Coverage range: #{project.test_runs.minimum(:coverage)}% - #{project.test_runs.maximum(:coverage)}%"
+      puts "⏱️  Runtime range: #{project.test_runs.minimum(:runtime)}s - #{project.test_runs.maximum(:runtime).round(1)}s"
+      puts "🧪 Total specs range: #{project.test_runs.minimum('ruby_specs + js_specs')} - #{project.test_runs.maximum('ruby_specs + js_specs')}"
+    end
   end
 
   desc "Clear all test data for 'Test Project'"
@@ -54,9 +56,9 @@ namespace :sample_data do
     if project
       count = project.test_runs.count
       project.test_runs.destroy_all
-      puts "🗑️  Cleared #{count} test runs for '#{project.name}'"
+      puts "🗑️  Cleared #{count} test runs for '#{project.name}'" unless Rails.env.test?
     else
-      puts "❌ 'Test Project' not found"
+      puts "❌ 'Test Project' not found" unless Rails.env.test?
     end
   end
 
