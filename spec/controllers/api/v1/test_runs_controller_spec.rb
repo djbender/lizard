@@ -18,7 +18,7 @@ RSpec.describe "API V1 TestRuns", type: :request do
 
   describe "POST /api/v1/test_runs" do
     context "with valid API key" do
-      let(:headers) { {"X-API-Key" => project.api_key} }
+      let(:headers) { {"Authorization" => "Bearer #{project.api_key}"} }
 
       it "creates a new test run" do
         expect {
@@ -55,12 +55,12 @@ RSpec.describe "API V1 TestRuns", type: :request do
       it "returns unauthorized error" do
         post "/api/v1/test_runs", params: valid_attributes
         expect(response).to have_http_status(:unauthorized)
-        expect(JSON.parse(response.body)).to include("error" => "Invalid API key")
+        expect(JSON.parse(response.body)).to include("error" => "Missing Authorization header")
       end
     end
 
     context "with invalid API key" do
-      let(:headers) { {"X-API-Key" => "invalid-key"} }
+      let(:headers) { {"Authorization" => "Bearer invalid-key"} }
 
       it "returns unauthorized error" do
         post "/api/v1/test_runs", params: valid_attributes, headers: headers
@@ -75,8 +75,18 @@ RSpec.describe "API V1 TestRuns", type: :request do
       end
     end
 
+    context "with invalid Authorization format" do
+      let(:headers) { {"Authorization" => "invalid-format-no-bearer"} }
+
+      it "returns authorization format error" do
+        post "/api/v1/test_runs", params: valid_attributes, headers: headers
+        expect(response).to have_http_status(:unauthorized)
+        expect(JSON.parse(response.body)).to include("error" => "Invalid Authorization format")
+      end
+    end
+
     context "with invalid parameters" do
-      let(:headers) { {"X-API-Key" => project.api_key} }
+      let(:headers) { {"Authorization" => "Bearer #{project.api_key}"} }
       let(:invalid_attributes) { {test_run: {branch: ""}} }
 
       it "creates test run even with minimal data" do

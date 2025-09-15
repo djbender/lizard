@@ -17,10 +17,8 @@
     <% if latest_run %>
       <p><small>Latest: <%= time_ago_in_words(latest_run.ran_at) %> ago</small></p>
 
-      <details>
-        <summary>Coverage: <strong><%= number_to_percentage(latest_run.coverage, precision: 1) %></strong></summary>
-        <meter value="<%= latest_run.coverage %>" max="100"><%= latest_run.coverage %>%</meter>
-      </details>
+      <p>Coverage: <strong><%= number_to_percentage(latest_run.coverage, precision: 1) %></strong></p>
+      <meter value="<%= latest_run.coverage %>" max="100" style="width: 100%;"><%= latest_run.coverage %>%</meter>
 
       <table>
         <tr>

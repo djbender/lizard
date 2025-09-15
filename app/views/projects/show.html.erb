@@ -83,10 +83,18 @@
             intersect: false,
           },
           scales: {
+            x: {
+              title: {
+                display: true,
+                text: 'Date'
+              }
+            },
             y: {
               type: 'linear',
               display: true,
               position: 'left',
+              min: 0,
+              max: 100,
               title: {
                 display: true,
                 text: 'Coverage %'
@@ -106,8 +114,15 @@
             },
             y2: {
               type: 'linear',
-              display: false,
+              display: true,
               position: 'right',
+              title: {
+                display: true,
+                text: 'Runtime (seconds)'
+              },
+              grid: {
+                drawOnChartArea: false,
+              },
             }
           }
         }

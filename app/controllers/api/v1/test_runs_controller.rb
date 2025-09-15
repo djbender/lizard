@@ -12,7 +12,13 @@ module Api
       private
 
       def authenticate_project!
-        @project = Project.find_by!(api_key: request.headers["X-API-Key"])
+        auth_header = request.headers["Authorization"]
+        return render json: {error: "Missing Authorization header"}, status: :unauthorized unless auth_header
+
+        api_key = auth_header.sub(/^Bearer\s+/, "")
+        return render json: {error: "Invalid Authorization format"}, status: :unauthorized if api_key == auth_header
+
+        @project = Project.find_by!(api_key: api_key)
       rescue ActiveRecord::RecordNotFound
         render json: {error: "Invalid API key"}, status: :unauthorized
       end
