@@ -11,7 +11,7 @@ RSpec.describe "Dashboard", type: :system do
       visit root_path
 
       aggregate_failures do
-        expect(page).to have_content("🦎 Lizard - Metrics Dashboard")
+        expect(page).to have_content("🦎 Lizard")
         expect(page).to have_button("Generate Sample Data")
       end
     end

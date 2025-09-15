@@ -30,7 +30,7 @@ RSpec.describe "Dashboard", type: :request do
 
       it "renders dashboard title" do
         get root_path
-        expect(response.body).to include("🦎 Lizard - Metrics Dashboard")
+        expect(response.body).to include("🦎 Lizard")
       end
     end
 

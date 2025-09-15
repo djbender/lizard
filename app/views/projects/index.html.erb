@@ -1,7 +1,10 @@
 <% content_for :title, "All Projects" %>
 
 <header>
-  <p><%= link_to "New Project", new_project_path %></p>
+  <h1>Projects</h1>
+  <%= form_with url: new_project_path, method: :get, local: true, style: "display: inline-block;" do |form| %>
+    <%= form.submit "New Project" %>
+  <% end %>
 </header>
 
 <% @projects.each do |project| %>

@@ -25,7 +25,7 @@
         </tr>
         <tr>
           <td><strong>API Key:</strong></td>
-          <td><%= @project.api_key %></td>
+          <td><code><%= @project.api_key[0..10] %>...</code></td>
         </tr>
         <tr>
           <td><strong>Created:</strong></td>
