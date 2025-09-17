@@ -25,7 +25,14 @@
         </tr>
         <tr>
           <td><strong>API Key:</strong></td>
-          <td><code><%= @project.api_key[0..10] %>...</code></td>
+          <td>
+            <code id="api-key-display" style="cursor: pointer;" onclick="toggleApiKey()" title="Click to reveal full API key">
+              <%= @project.api_key[0..10] %>...
+            </code>
+            <code id="api-key-full" style="display: none; cursor: pointer;" onclick="toggleApiKey()" title="Click to hide API key">
+              <%= @project.api_key %>
+            </code>
+          </td>
         </tr>
         <tr>
           <td><strong>Created:</strong></td>
@@ -69,6 +76,19 @@
 </section>
 
 <script>
+  function toggleApiKey() {
+    const truncatedElement = document.getElementById('api-key-display');
+    const fullElement = document.getElementById('api-key-full');
+
+    if (truncatedElement.style.display === 'none') {
+      truncatedElement.style.display = 'inline';
+      fullElement.style.display = 'none';
+    } else {
+      truncatedElement.style.display = 'none';
+      fullElement.style.display = 'inline';
+    }
+  }
+
   fetch('<%= metrics_project_path(@project) %>')
     .then(response => response.json())
     .then(data => {
