@@ -75,77 +75,14 @@
   </table>
 </section>
 
-<script>
-  function toggleApiKey() {
-    const truncatedElement = document.getElementById('api-key-display');
-    const fullElement = document.getElementById('api-key-full');
+<%= javascript_import_module_tag "api_key_toggle" %>
+<%= javascript_import_module_tag "project_metrics_chart" %>
 
-    if (truncatedElement.style.display === 'none') {
-      truncatedElement.style.display = 'inline';
-      fullElement.style.display = 'none';
-    } else {
-      truncatedElement.style.display = 'none';
-      fullElement.style.display = 'inline';
-    }
-  }
+<script type="module">
+  import { initializeProjectChart } from "project_metrics_chart";
 
-  fetch('<%= metrics_project_path(@project) %>')
-    .then(response => response.json())
-    .then(data => {
-      const ctx = document.getElementById('metricsChart').getContext('2d');
-      new Chart(ctx, {
-        type: 'line',
-        data: data,
-        options: {
-          responsive: true,
-          interaction: {
-            mode: 'index',
-            intersect: false,
-          },
-          scales: {
-            x: {
-              title: {
-                display: true,
-                text: 'Date'
-              }
-            },
-            y: {
-              type: 'linear',
-              display: true,
-              position: 'left',
-              min: 0,
-              max: 100,
-              title: {
-                display: true,
-                text: 'Coverage %'
-              }
-            },
-            y1: {
-              type: 'linear',
-              display: true,
-              position: 'right',
-              title: {
-                display: true,
-                text: 'Spec Count'
-              },
-              grid: {
-                drawOnChartArea: false,
-              },
-            },
-            y2: {
-              type: 'linear',
-              display: true,
-              position: 'right',
-              title: {
-                display: true,
-                text: 'Runtime (seconds)'
-              },
-              grid: {
-                drawOnChartArea: false,
-              },
-            }
-          }
-        }
-      });
-    });
+  // Initialize the metrics chart when the page loads
+  document.addEventListener('DOMContentLoaded', function() {
+    initializeProjectChart('<%= metrics_project_path(@project) %>');
+  });
 </script>
