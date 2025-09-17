@@ -75,4 +75,7 @@ Rails.application.configure do
     "localhost",
     ENV["RAILS_DEVELOPMENT_HOSTS"]
   ]
+
+  # Enable site authentication in development environment
+  config.disable_site_auth = false
 end

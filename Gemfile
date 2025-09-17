@@ -48,6 +48,8 @@ group :development, :test do
   gem "rspec-rails", "~> 8.0.0"
 
   gem "sqlite3", ">= 2.1"
+
+  gem "dotenv-rails", "~> 3.1"
 end
 
 group :development do

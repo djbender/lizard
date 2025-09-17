@@ -1,118 +1,95 @@
-require 'rails_helper'
+require "rails_helper"
 
-RSpec.describe 'Basic Authentication', type: :request do
-  describe 'when accessing dashboard' do
-    context 'when not in production' do
-      before do
-        allow(Rails).to receive(:env).and_return(ActiveSupport::EnvironmentInquirer.new('test'))
-        allow(ENV).to receive(:[]).and_call_original
-        allow(ENV).to receive(:[]).with('BASIC_AUTH_USERNAME').and_return('testuser')
-        allow(ENV).to receive(:[]).with('BASIC_AUTH_PASSWORD').and_return('testpass')
-      end
+RSpec.describe "Application Authentication", type: :request do
+  let(:valid_password) { "test123" }
+  let(:session_expiry_hours) { 24 }
 
-      it 'allows access without basic auth' do
-        get '/'
-        expect(response).to have_http_status(:success)
-      end
+  shared_examples "redirects to login" do
+    it "redirects to login page" do
+      get "/"
+      expect(response).to redirect_to("/login")
+    end
+  end
+
+  shared_examples "allows access" do
+    it "allows access to protected pages" do
+      get "/"
+      expect(response).to have_http_status(:success)
+    end
+  end
+
+  describe "when accessing dashboard" do
+    context "when in test environment" do
+      include_examples "allows access"
     end
 
-    context 'when in production with auth credentials missing' do
-      before do
-        allow(Rails).to receive(:env).and_return(ActiveSupport::EnvironmentInquirer.new('production'))
-        allow(ENV).to receive(:[]).and_call_original
-        allow(ENV).to receive(:[]).with('BASIC_AUTH_USERNAME').and_return(nil)
-        allow(ENV).to receive(:[]).with('BASIC_AUTH_PASSWORD').and_return(nil)
-      end
-
-      it 'returns service unavailable error' do
-        get '/'
-        expect(response).to have_http_status(:service_unavailable)
-        expect(response.body).to include('Configuration Error: Basic authentication credentials must be set in production')
-      end
-    end
-
-    context 'when in production with partial auth credentials' do
-      before do
-        allow(Rails).to receive(:env).and_return(ActiveSupport::EnvironmentInquirer.new('production'))
-        allow(ENV).to receive(:[]).and_call_original
-        allow(ENV).to receive(:[]).with('BASIC_AUTH_USERNAME').and_return('testuser')
-        allow(ENV).to receive(:[]).with('BASIC_AUTH_PASSWORD').and_return(nil)
-      end
-
-      it 'returns service unavailable error' do
-        get '/'
-        expect(response).to have_http_status(:service_unavailable)
-        expect(response.body).to include('Configuration Error: Basic authentication credentials must be set in production')
-      end
-    end
-
-    context 'when in production with auth credentials set' do
-      before do
-        allow(Rails).to receive(:env).and_return(ActiveSupport::EnvironmentInquirer.new('production'))
-        allow(ENV).to receive(:[]).and_call_original
-        allow(ENV).to receive(:[]).with('BASIC_AUTH_USERNAME').and_return('testuser')
-        allow(ENV).to receive(:[]).with('BASIC_AUTH_PASSWORD').and_return('testpass')
-      end
-
-      context 'without authorization header' do
-        it 'returns 401 and requests authentication' do
-          get '/'
-          expect(response).to have_http_status(:unauthorized)
-          expect(response.headers['WWW-Authenticate']).to eq('Basic realm="Application"')
-        end
-      end
-
-      context 'with valid credentials' do
-        it 'allows access' do
-          credentials = ActionController::HttpAuthentication::Basic.encode_credentials('testuser', 'testpass')
-          get '/', headers: { 'HTTP_AUTHORIZATION' => credentials }
-          expect(response).to have_http_status(:success)
-        end
-      end
-
-      context 'with invalid username' do
-        it 'returns 401' do
-          credentials = ActionController::HttpAuthentication::Basic.encode_credentials('wronguser', 'testpass')
-          get '/', headers: { 'HTTP_AUTHORIZATION' => credentials }
-          expect(response).to have_http_status(:unauthorized)
-          expect(response.headers['WWW-Authenticate']).to eq('Basic realm="Application"')
-        end
-      end
-
-      context 'with invalid password' do
-        it 'returns 401' do
-          credentials = ActionController::HttpAuthentication::Basic.encode_credentials('testuser', 'wrongpass')
-          get '/', headers: { 'HTTP_AUTHORIZATION' => credentials }
-          expect(response).to have_http_status(:unauthorized)
-          expect(response.headers['WWW-Authenticate']).to eq('Basic realm="Application"')
-        end
-      end
-
-      context 'with malformed authorization header' do
-        it 'returns 401' do
-          get '/', headers: { 'HTTP_AUTHORIZATION' => 'Basic malformed' }
-          expect(response).to have_http_status(:unauthorized)
-          expect(response.headers['WWW-Authenticate']).to eq('Basic realm="Application"')
-        end
-      end
-    end
-
-    context 'when accessing API endpoints in production' do
-      before do
-        allow(Rails).to receive(:env).and_return(ActiveSupport::EnvironmentInquirer.new('production'))
-        allow(ENV).to receive(:[]).and_call_original
-        allow(ENV).to receive(:[]).with('BASIC_AUTH_USERNAME').and_return(nil)
-        allow(ENV).to receive(:[]).with('BASIC_AUTH_PASSWORD').and_return(nil)
-      end
-
-      it 'skips authentication for API endpoints' do
-        post '/api/v1/test_runs', params: { test_data: 'sample' }
+    context "when accessing API endpoints" do
+      it "skips authentication for API endpoints" do
+        post "/api/v1/test_runs", params: {test_data: "sample"}
         expect(response).to_not have_http_status(:service_unavailable)
-        # It should return 401 from the API authentication, not from basic auth
+        # It should return 401 from the API authentication, not from site auth
         expect(response).to have_http_status(:unauthorized)
-        expect(response.body).to_not include('Configuration Error')
+        expect(response.body).to_not include("Configuration Error")
+      end
+    end
+  end
+
+  describe "authentication when enabled" do
+    around do |example|
+      ENV["SITE_PASSWORD"] = valid_password
+      Rails.application.config.disable_site_auth = false
+
+      example.run
+
+      ENV.delete("SITE_PASSWORD")
+      Rails.application.config.disable_site_auth = true
+    end
+
+    context "without SITE_PASSWORD configured" do
+      around do |example|
+        ENV.delete("SITE_PASSWORD")
+        example.run
+        ENV["SITE_PASSWORD"] = "test123"
+      end
+
+      it "returns configuration error" do
+        get "/"
+
+        aggregate_failures do
+          expect(response).to have_http_status(:service_unavailable)
+          expect(response.body).to include("Configuration Error: SITE_PASSWORD must be set")
+        end
       end
     end
 
+    context "without valid session" do
+      include_examples "redirects to login"
+    end
+
+    context "with valid session" do
+      before do
+        valid_session = {
+          authenticated: true,
+          login_time: 1.hour.ago
+        }
+        allow_any_instance_of(ApplicationController).to receive(:session).and_return(valid_session)
+      end
+
+      include_examples "allows access"
+    end
+
+    context "with expired session" do
+      before do
+        expired_session = {
+          authenticated: true,
+          login_time: (session_expiry_hours + 1).hours.ago
+        }
+        allow_any_instance_of(ApplicationController).to receive(:session).and_return(expired_session)
+        allow(expired_session).to receive(:[]=)
+        allow(expired_session).to receive(:delete)
+      end
+
+      include_examples "redirects to login"
+    end
   end
 end

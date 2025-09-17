@@ -1,70 +1,70 @@
-require 'rails_helper'
+require "rails_helper"
 
-RSpec.describe 'Projects', type: :system do
+RSpec.describe "Projects", type: :system do
   before do
     driven_by(:rack_test)
   end
 
-  describe 'Project show page' do
-    let!(:project) { Project.create!(name: 'Test Project') }
+  describe "Project show page" do
+    let!(:project) { Project.create!(name: "Test Project") }
 
     before do
       visit project_path(project)
     end
 
-    it 'displays project details' do
-      expect(page).to have_content('Test Project')
-      expect(page).to have_content('API Key:')
-      expect(page).to have_content('Created:')
-      expect(page).to have_content('Updated:')
+    it "displays project details" do
+      expect(page).to have_content("Test Project")
+      expect(page).to have_content("API Key:")
+      expect(page).to have_content("Created:")
+      expect(page).to have_content("Updated:")
     end
 
-    describe 'API key toggle functionality' do
-      it 'initially shows truncated API key' do
-        within '#api-key-display' do
+    describe "API key toggle functionality" do
+      it "initially shows truncated API key" do
+        within "#api-key-display" do
           expect(page).to have_content("#{project.api_key[0..10]}...")
         end
 
-        expect(page).to have_css('#api-key-display', visible: true)
-        expect(page).to have_css('#api-key-full', visible: false)
+        expect(page).to have_css("#api-key-display", visible: true)
+        expect(page).to have_css("#api-key-full", visible: false)
       end
 
-      it 'has click handlers and proper HTML structure for JavaScript functionality' do
+      it "has click handlers and proper HTML structure for JavaScript functionality" do
         # Check that elements are set up correctly for JavaScript
         expect(page).to have_css('#api-key-display[onclick="toggleApiKey()"]')
         expect(page).to have_css('#api-key-full[onclick="toggleApiKey()"]', visible: :all)
 
         # Check the HTML structure supports the toggle
-        expect(page).to have_css('#api-key-display', visible: true)
-        expect(page).to have_css('#api-key-full', visible: false)
+        expect(page).to have_css("#api-key-display", visible: true)
+        expect(page).to have_css("#api-key-full", visible: false)
 
         # Verify the full API key is in the page HTML (even if hidden)
         expect(page.html).to include(project.api_key)
       end
 
-      it 'has appropriate cursor styling and tooltips' do
+      it "has appropriate cursor styling and tooltips" do
         expect(page).to have_css('#api-key-display[style*="cursor: pointer"]')
         expect(page).to have_css('#api-key-display[title="Click to reveal full API key"]')
         expect(page).to have_css('#api-key-full[title="Click to hide API key"]', visible: :all)
       end
     end
 
-    describe 'Recent test runs section' do
-      context 'when project has no test runs' do
-        it 'displays empty test runs table' do
-          expect(page).to have_content('Recent Test Runs')
-          expect(page).to have_css('table')
-          expect(page).to have_content('Date')
-          expect(page).to have_content('Branch')
-          expect(page).to have_content('Ruby Specs')
+    describe "Recent test runs section" do
+      context "when project has no test runs" do
+        it "displays empty test runs table" do
+          expect(page).to have_content("Recent Test Runs")
+          expect(page).to have_css("table")
+          expect(page).to have_content("Date")
+          expect(page).to have_content("Branch")
+          expect(page).to have_content("Ruby Specs")
         end
       end
 
-      context 'when project has test runs' do
+      context "when project has test runs" do
         let!(:test_run) do
           project.test_runs.create!(
-            branch: 'main',
-            commit_sha: 'abc123',
+            branch: "main",
+            commit_sha: "abc123",
             ruby_specs: 100,
             js_specs: 50,
             coverage: 95.5,
@@ -77,12 +77,12 @@ RSpec.describe 'Projects', type: :system do
           visit project_path(project)
         end
 
-        it 'displays test run data' do
-          expect(page).to have_content('main')
-          expect(page).to have_content('100')
-          expect(page).to have_content('50')
-          expect(page).to have_content('95.5%')
-          expect(page).to have_content('30.5s')
+        it "displays test run data" do
+          expect(page).to have_content("main")
+          expect(page).to have_content("100")
+          expect(page).to have_content("50")
+          expect(page).to have_content("95.5%")
+          expect(page).to have_content("30.5s")
         end
       end
     end
