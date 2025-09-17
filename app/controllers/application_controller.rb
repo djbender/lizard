@@ -2,12 +2,8 @@ class ApplicationController < ActionController::Base
   # Only allow modern browsers supporting webp images, web push, badges, import maps, CSS nesting, and CSS :has.
   allow_browser versions: :modern
 
-  # Basic authentication for production
-  # :nocov:
-  if Rails.env.production? && ENV["BASIC_AUTH_USERNAME"] && ENV["BASIC_AUTH_PASSWORD"]
-    http_basic_authenticate_with name: ENV["BASIC_AUTH_USERNAME"], password: ENV["BASIC_AUTH_PASSWORD"]
-  end
-  # :nocov:
+
+  before_action :authenticate_production, if: -> { Rails.env.production? && !request.path.start_with?('/api/') }
 
   clear_helpers
   helper Importmap::ImportmapTagsHelper
@@ -28,6 +24,19 @@ class ApplicationController < ActionController::Base
     # Include projects helper for controllers that need project-related functionality
     if ["dashboard"].include?(helper_name) && File.exist?(Rails.root.join("app/helpers/projects_helper.rb"))
       subclass.helper :projects
+    end
+  end
+
+  private
+
+  def authenticate_production
+    unless ENV["BASIC_AUTH_USERNAME"].present? && ENV["BASIC_AUTH_PASSWORD"].present?
+      render plain: "Configuration Error: Basic authentication credentials must be set in production", status: :service_unavailable
+      return
+    end
+
+    authenticate_or_request_with_http_basic("Application") do |username, password|
+      username == ENV["BASIC_AUTH_USERNAME"] && password == ENV["BASIC_AUTH_PASSWORD"]
     end
   end
 end
