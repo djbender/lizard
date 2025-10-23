@@ -17,6 +17,7 @@ Rails.application.routes.draw do
     member do
       get "metrics"
     end
+    resources :test_runs, only: [:destroy]
   end
 
   post "generate_sample_data", to: "dashboard#generate_sample_data"

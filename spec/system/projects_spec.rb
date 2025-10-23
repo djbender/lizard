@@ -84,6 +84,26 @@ RSpec.describe "Projects", type: :system do
           expect(page).to have_content("95.5%")
           expect(page).to have_content("30.5s")
         end
+
+        it "displays a delete button for the test run" do
+          expect(page).to have_button("Delete")
+        end
+
+        it "deletes the test run when delete button is clicked" do
+          expect {
+            click_button "Delete"
+          }.to change(TestRun, :count).by(-1)
+        end
+
+        it "redirects to project page after deletion" do
+          click_button "Delete"
+          expect(page).to have_current_path(project_path(project))
+        end
+
+        it "displays a success notice after deletion" do
+          click_button "Delete"
+          expect(page).to have_content("Test run was successfully deleted.")
+        end
       end
     end
   end

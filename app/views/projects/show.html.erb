@@ -58,6 +58,7 @@
         <th>JS Specs</th>
         <th>Coverage</th>
         <th>Runtime</th>
+        <th>Actions</th>
       </tr>
     </thead>
     <tbody>
@@ -69,6 +70,9 @@
           <td><%= run.js_specs %></td>
           <td><%= number_to_percentage(run.coverage, precision: 1) %></td>
           <td><%= number_with_precision(run.runtime, precision: 1) %>s</td>
+          <td>
+            <%= button_to "Delete", project_test_run_path(@project, run), method: :delete, data: { turbo_confirm: "Are you sure you want to delete this test run?" } %>
+          </td>
         </tr>
       <% end %>
     </tbody>
