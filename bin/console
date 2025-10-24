@@ -1,0 +1,34 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+# Load the Rails environment with optional environment argument
+# Usage:
+#   bin/console              # defaults to development
+#   bin/console production   # loads production environment
+#   bin/console test         # loads test environment
+
+require "bundler/setup"
+
+# Set RAILS_ENV from first argument or default to development
+ENV["RAILS_ENV"] = ARGV.shift if ARGV[0]
+ENV["RAILS_ENV"] ||= "development"
+
+# Disable SimpleCov in console mode
+ENV["SIMPLECOV_ENABLED"] = "false"
+
+# Load rails_helper for test environment, otherwise load regular Rails environment
+if ENV["RAILS_ENV"] == "test"
+  # Add spec directory to load path so rails_helper can find spec_helper
+  $LOAD_PATH.unshift(File.expand_path("../spec", __dir__))
+  # Load RSpec first (required by spec_helper)
+  require "rspec/core"
+  require_relative "../spec/rails_helper"
+  puts "=> Loaded #{ENV['RAILS_ENV']} environment with rails_helper"
+else
+  require_relative "../config/environment"
+  puts "=> Loaded #{ENV['RAILS_ENV']} environment"
+end
+
+# Start IRB console with Rails loaded
+require "irb"
+IRB.start

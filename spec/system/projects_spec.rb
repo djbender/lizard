@@ -1,10 +1,6 @@
 require "rails_helper"
 
 RSpec.describe "Projects", type: :system do
-  before do
-    driven_by(:rack_test)
-  end
-
   describe "Project show page" do
     let!(:project) { Project.create!(name: "Test Project") }
 
@@ -89,6 +85,11 @@ RSpec.describe "Projects", type: :system do
           expect(page).to have_button("Delete")
         end
 
+        it "has confirmation prompt configured on delete button" do
+          delete_button = page.find('button', text: 'Delete')
+          expect(delete_button['data-turbo-confirm']).to eq("Are you sure you want to delete this test run?")
+        end
+
         it "deletes the test run when delete button is clicked" do
           expect {
             click_button "Delete"
@@ -103,6 +104,38 @@ RSpec.describe "Projects", type: :system do
         it "displays a success notice after deletion" do
           click_button "Delete"
           expect(page).to have_content("Test run was successfully deleted.")
+        end
+      end
+
+      context "with JavaScript enabled", :js do
+        let!(:test_run) do
+          project.test_runs.create!(
+            branch: "main",
+            commit_sha: "abc123",
+            ruby_specs: 100,
+            js_specs: 50,
+            coverage: 95.5,
+            runtime: 30.5,
+            ran_at: 1.hour.ago
+          )
+        end
+
+        before do
+          visit project_path(project)
+        end
+
+        it "shows confirmation dialog and deletes when accepted" do
+          page.accept_confirm do
+            click_button "Delete"
+          end
+          expect(page).to have_content("Test run was successfully deleted.")
+        end
+
+        it "shows confirmation dialog and does not delete when dismissed" do
+          page.dismiss_confirm do
+            click_button "Delete"
+          end
+          expect(TestRun.count).to eq(1)
         end
       end
     end
