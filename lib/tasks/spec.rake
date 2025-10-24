@@ -9,5 +9,7 @@ namespace :spec do
   RSpec::Core::RakeTask.new(:system) do |t|
     t.pattern = "spec/system/**/*_spec.rb"
     t.rspec_opts = "--tag type:system"
+    # Disable SimpleCov for system tests (they don't contribute meaningful coverage)
+    ENV["SIMPLECOV_ENABLED"] = "false"
   end
 end
