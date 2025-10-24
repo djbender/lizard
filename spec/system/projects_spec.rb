@@ -86,8 +86,8 @@ RSpec.describe "Projects", type: :system do
         end
 
         it "has confirmation prompt configured on delete button" do
-          delete_button = page.find('button', text: 'Delete')
-          expect(delete_button['data-turbo-confirm']).to eq("Are you sure you want to delete this test run?")
+          delete_button = page.find("button", text: "Delete")
+          expect(delete_button["data-turbo-confirm"]).to eq("Are you sure you want to delete this test run?")
         end
 
         it "deletes the test run when delete button is clicked" do
