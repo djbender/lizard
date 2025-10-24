@@ -5,6 +5,36 @@ set -e
 
 echo "Installing Git hooks..."
 
+# Create pre-commit hook
+cat > .git/hooks/pre-commit << 'EOF'
+#!/usr/bin/env bash
+# Git pre-commit hook to auto-fix standardrb issues
+
+echo "Running standardrb --fix..."
+
+bin/standardrb --fix
+
+# Check if standardrb made any changes
+if ! git diff --exit-code > /dev/null 2>&1; then
+  echo "📝 standardrb auto-fixed some issues, adding to commit..."
+  git add -u
+fi
+
+# Run standardrb again to check for any remaining issues
+bin/standardrb
+
+if [ $? -ne 0 ]; then
+  echo "❌ standardrb found issues that couldn't be auto-fixed."
+  echo "Please fix them manually before committing."
+  exit 1
+fi
+
+echo "✅ standardrb passed"
+exit 0
+EOF
+
+chmod +x .git/hooks/pre-commit
+
 # Create pre-push hook
 cat > .git/hooks/pre-push << 'EOF'
 #!/usr/bin/env bash
@@ -29,6 +59,9 @@ chmod +x .git/hooks/pre-push
 echo "✅ Git hooks installed successfully!"
 echo ""
 echo "Hooks installed:"
+echo "  - pre-commit: Runs standardrb --fix and stages changes automatically"
 echo "  - pre-push: Runs standardrb before pushing"
 echo ""
-echo "To skip hooks temporarily, use: git push --no-verify"
+echo "To skip hooks temporarily, use:"
+echo "  git commit --no-verify"
+echo "  git push --no-verify"
