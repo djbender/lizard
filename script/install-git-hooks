@@ -50,8 +50,11 @@ fi
 
 # Run standardrb again to check for any remaining issues
 if ! bin/standardrb; then
+  echo ""
   echo "❌ standardrb found issues that couldn't be auto-fixed."
   echo "Please fix them manually before committing."
+  echo ""
+  echo "To skip this check, use: git commit --no-verify"
   exit 1
 fi
 
@@ -77,8 +80,11 @@ set -euo pipefail
 echo "Running standardrb before push..."
 
 if ! bin/standardrb; then
+  echo ""
   echo "❌ standardrb failed. Fix linting issues before pushing."
-  echo "Or run: bin/standardrb --fix"
+  echo "You can run: bin/standardrb --fix"
+  echo ""
+  echo "To skip this check, use: git push --no-verify"
   exit 1
 fi
 
