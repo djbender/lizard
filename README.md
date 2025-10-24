@@ -73,3 +73,5 @@ Check Zeitwerk loading:
 ```bash
 bin/rails zeitwerk:check
 ```
+
+Run ./script/install-git-hooks to install Git hooks!

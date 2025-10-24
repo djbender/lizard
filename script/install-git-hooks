@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+# Install Git hooks for this project
+
+set -e
+
+echo "Installing Git hooks..."
+
+# Create pre-push hook
+cat > .git/hooks/pre-push << 'EOF'
+#!/usr/bin/env bash
+# Git pre-push hook to run standardrb linter
+
+echo "Running standardrb before push..."
+
+bin/standardrb
+
+if [ $? -ne 0 ]; then
+  echo "❌ standardrb failed. Fix linting issues before pushing."
+  echo "Or run: bin/standardrb --fix"
+  exit 1
+fi
+
+echo "✅ standardrb passed"
+exit 0
+EOF
+
+chmod +x .git/hooks/pre-push
+
+echo "✅ Git hooks installed successfully!"
+echo ""
+echo "Hooks installed:"
+echo "  - pre-push: Runs standardrb before pushing"
+echo ""
+echo "To skip hooks temporarily, use: git push --no-verify"
