@@ -1,14 +1,42 @@
 #!/usr/bin/env bash
 # Install Git hooks for this project
 
-set -e
+set -euo pipefail
 
 echo "Installing Git hooks..."
 
+# Function to prompt for overwrite
+# Returns: 0 if file exists (overwrite), 1 if new file
+prompt_overwrite() {
+  local hook_name=$1
+  local hook_path=".git/hooks/${hook_name}"
+
+  if [ -f "$hook_path" ]; then
+    echo ""
+    echo "⚠️  ${hook_name} hook already exists"
+    read -p "Overwrite ${hook_name}? [Y/n] " -n 1 -r
+    echo
+    if [[ ! $REPLY =~ ^[Yy]$ ]] && [[ -n $REPLY ]]; then
+      echo "❌ Installation aborted"
+      exit 1
+    fi
+    return 0  # File exists, will be overwritten
+  fi
+  return 1  # New file
+}
+
 # Create pre-commit hook
+if prompt_overwrite "pre-commit"; then
+  PRECOMMIT_ACTION="Overwritten"
+else
+  PRECOMMIT_ACTION="Installed"
+fi
+
 cat > .git/hooks/pre-commit << 'EOF'
 #!/usr/bin/env bash
 # Git pre-commit hook to auto-fix standardrb issues
+
+set -euo pipefail
 
 echo "Running standardrb --fix..."
 
@@ -21,44 +49,49 @@ if ! git diff --exit-code > /dev/null 2>&1; then
 fi
 
 # Run standardrb again to check for any remaining issues
-bin/standardrb
-
-if [ $? -ne 0 ]; then
+if ! bin/standardrb; then
   echo "❌ standardrb found issues that couldn't be auto-fixed."
   echo "Please fix them manually before committing."
   exit 1
 fi
 
 echo "✅ standardrb passed"
-exit 0
 EOF
 
 chmod +x .git/hooks/pre-commit
+echo "✅ ${PRECOMMIT_ACTION} pre-commit hook"
 
 # Create pre-push hook
+if prompt_overwrite "pre-push"; then
+  PREPUSH_ACTION="Overwritten"
+else
+  PREPUSH_ACTION="Installed"
+fi
+
 cat > .git/hooks/pre-push << 'EOF'
 #!/usr/bin/env bash
 # Git pre-push hook to run standardrb linter
 
+set -euo pipefail
+
 echo "Running standardrb before push..."
 
-bin/standardrb
-
-if [ $? -ne 0 ]; then
+if ! bin/standardrb; then
   echo "❌ standardrb failed. Fix linting issues before pushing."
   echo "Or run: bin/standardrb --fix"
   exit 1
 fi
 
 echo "✅ standardrb passed"
-exit 0
 EOF
 
 chmod +x .git/hooks/pre-push
+echo "✅ ${PREPUSH_ACTION} pre-push hook"
 
-echo "✅ Git hooks installed successfully!"
 echo ""
-echo "Hooks installed:"
+echo "✅ Git hooks installation complete!"
+echo ""
+echo "Installed hooks:"
 echo "  - pre-commit: Runs standardrb --fix and stages changes automatically"
 echo "  - pre-push: Runs standardrb before pushing"
 echo ""
