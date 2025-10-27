@@ -28,7 +28,7 @@
       <nav style="display: inline-block;">
         <%= link_to "Projects", projects_path %>
         <span style="margin: 0 1rem;">|</span>
-        <%= link_to "Logout", logout_path, style: "color: #666; text-decoration: underline;" %>
+        <%= link_to "Logout", logout_path, :"data-turbo" => false %>
       </nav>
     <% end %>
   </header>
