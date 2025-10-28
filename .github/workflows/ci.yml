@@ -71,6 +71,11 @@ jobs:
   test:
     runs-on: ubuntu-latest
 
+    env:
+      # to add other change the following env var to:
+      # PLAYWRIGHT_BROWSERS: chromium firefox webkit
+      PLAYWRIGHT_BROWSERS: chromium
+
     # services:
     #  redis:
     #    image: redis
@@ -78,11 +83,37 @@ jobs:
     #      - 6379:6379
     #    options: --health-cmd "redis-cli ping" --health-interval 10s --health-timeout 5s --health-retries 5
     steps:
-      - name: Install packages
-        run: sudo apt-get update && sudo apt-get install --no-install-recommends --yes build-essential libsqlite3-dev libyaml-dev pkg-config
-
       - name: Checkout code
         uses: actions/checkout@v5
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version-file: .node-version
+          cache: 'npm'
+
+      - name: Get installed Playwright version
+        id: playwright-version
+        run: |
+          echo "version=$(npx playwright --version | cut -d' ' -f2)" >> $GITHUB_OUTPUT
+          echo "browsers_key=$(echo '${{ env.PLAYWRIGHT_BROWSERS }}' | tr ' ' '-')" >> $GITHUB_OUTPUT
+
+      - name: Cache apt packages
+        uses: actions/cache@v4
+        id: apt-cache
+        with:
+          path: /var/cache/apt/archives
+          key: apt-${{ runner.os }}-${{ hashFiles('.github/workflows/ci.yml') }}-pw-${{ steps.playwright-version.outputs.version }}-${{ steps.playwright-version.outputs.browsers_key }}
+
+      - name: Install build packages
+        if: steps.apt-cache.outputs.cache-hit != 'true'
+        run: sudo apt-get update && sudo apt-get install --no-install-recommends --yes build-essential libsqlite3-dev libyaml-dev pkg-config
+
+      - name: Install Playwright system dependencies
+        if: steps.apt-cache.outputs.cache-hit != 'true'
+        run: |
+          PLAYWRIGHT_INSTALL_CMD=$(npx playwright install --dry-run --with-deps ${{ env.PLAYWRIGHT_BROWSERS }} | grep '^sh -c' | sed 's/^sh -c "//' | sed 's/"$//')
+          sudo sh -c "$PLAYWRIGHT_INSTALL_CMD"
 
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
@@ -90,13 +121,16 @@ jobs:
           ruby-version: .ruby-version
           bundler-cache: true
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v6
+      - name: Cache Playwright browsers
+        uses: actions/cache@v4
+        id: playwright-cache
         with:
-          node-version-file: .node-version
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ steps.playwright-version.outputs.version }}-${{ steps.playwright-version.outputs.browsers_key }}
 
       - name: Install Playwright browsers
-        run: script/playwright_install
+        if: steps.playwright-cache.outputs.cache-hit != 'true'
+        run: npx playwright install ${{ env.PLAYWRIGHT_BROWSERS }}
 
       - name: Run tests
         env:
