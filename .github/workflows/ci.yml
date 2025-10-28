@@ -101,21 +101,13 @@ jobs:
           echo "version=$(npx playwright --version | cut -d' ' -f2)" >> $GITHUB_OUTPUT
           echo "browsers_key=$(echo '${{ env.PLAYWRIGHT_BROWSERS }}' | tr ' ' '-')" >> $GITHUB_OUTPUT
 
-      - name: Cache apt packages
-        uses: actions/cache@v4
-        id: apt-cache
-        with:
-          path: /var/cache/apt/archives
-          key: apt-${{ runner.os }}-workflow-${{ hashFiles('.github/workflows/ci.yml') }}-playwright-${{ steps.playwright-version.outputs.version }}-${{ steps.playwright-version.outputs.browsers_key }}
-
       - name: Install build packages
-        if: steps.apt-cache.outputs.cache-hit != 'true'
         run: sudo apt-get update && sudo apt-get install --no-install-recommends --yes build-essential libsqlite3-dev libyaml-dev pkg-config
 
       - name: Install Playwright system dependencies
-        if: steps.apt-cache.outputs.cache-hit != 'true'
+        shell: /usr/bin/bash -e {0} -xu -o pipefail
         run: |
-          PLAYWRIGHT_INSTALL_CMD=$(npx playwright install --dry-run --with-deps ${{ env.PLAYWRIGHT_BROWSERS }} | grep '^sh -c' | sed 's/^sh -c "//' | sed 's/"$//')
+          PLAYWRIGHT_INSTALL_CMD=$(npx playwright install --dry-run --with-deps ${{ env.PLAYWRIGHT_BROWSERS }} | head -1 | sed 's/^sudo -- sh -c "//' | sed 's/"$//')
           sudo sh -c "$PLAYWRIGHT_INSTALL_CMD"
 
       - name: Set up Ruby
