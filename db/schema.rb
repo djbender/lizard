@@ -10,25 +10,25 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_09_14_071625) do
+ActiveRecord::Schema[8.1].define(version: 2025_09_14_071625) do
   create_table "projects", force: :cascade do |t|
-    t.string "name"
     t.string "api_key"
     t.datetime "created_at", null: false
+    t.string "name"
     t.datetime "updated_at", null: false
     t.index ["api_key"], name: "index_projects_on_api_key", unique: true
   end
 
   create_table "test_runs", force: :cascade do |t|
-    t.integer "project_id", null: false
-    t.string "commit_sha"
     t.string "branch"
-    t.integer "ruby_specs"
-    t.integer "js_specs"
-    t.float "runtime"
+    t.string "commit_sha"
     t.float "coverage"
-    t.datetime "ran_at"
     t.datetime "created_at", null: false
+    t.integer "js_specs"
+    t.integer "project_id", null: false
+    t.datetime "ran_at"
+    t.integer "ruby_specs"
+    t.float "runtime"
     t.datetime "updated_at", null: false
     t.index ["project_id"], name: "index_test_runs_on_project_id"
   end

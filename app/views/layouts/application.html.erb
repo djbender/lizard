@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="A simple Rails application for tracking test run metrics across projects.">
     <title><%= content_for(:title) || "Lizard" %></title>
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
@@ -13,7 +14,8 @@
     <link rel="icon" href="/icon.svg" type="image/svg+xml">
     <link rel="apple-touch-icon" href="/icon.png">
 
-    <link rel="stylesheet" href="https://cdn.simplecss.org/simple.min.css">
+    <link rel="preload" href="https://cdn.simplecss.org/simple.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="https://cdn.simplecss.org/simple.min.css"></noscript>
     <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
@@ -28,7 +30,7 @@
       <nav style="display: inline-block;">
         <%= link_to "Projects", projects_path %>
         <span style="margin: 0 1rem;">|</span>
-        <%= link_to "Logout", logout_path, style: "color: #666; text-decoration: underline;" %>
+        <%= link_to "Logout", logout_path, :"data-turbo" => false %>
       </nav>
     <% end %>
   </header>
