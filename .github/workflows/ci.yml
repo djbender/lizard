@@ -106,7 +106,7 @@ jobs:
         id: apt-cache
         with:
           path: /var/cache/apt/archives
-          key: apt-${{ runner.os }}-${{ hashFiles('.github/workflows/ci.yml') }}-pw-${{ steps.playwright-version.outputs.version }}-${{ steps.playwright-version.outputs.browsers_key }}
+          key: apt-${{ runner.os }}-workflow-${{ hashFiles('.github/workflows/ci.yml') }}-playwright-${{ steps.playwright-version.outputs.version }}-${{ steps.playwright-version.outputs.browsers_key }}
 
       - name: Install build packages
         if: steps.apt-cache.outputs.cache-hit != 'true'
