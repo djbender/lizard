@@ -41,6 +41,9 @@ end
 
 Capybara.javascript_driver = :playwright
 
+# Configure Capybara to save screenshots via save_path
+Capybara.save_path = Rails.root.join("tmp/capybara/screenshots")
+
 # Ensure video directory exists and clear old videos (unless explicitly keeping them)
 VIDEO_DIR = Rails.root.join("tmp/capybara/videos")
 FileUtils.mkdir_p(VIDEO_DIR)
