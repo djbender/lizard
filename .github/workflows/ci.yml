@@ -132,10 +132,12 @@ jobs:
           # REDIS_URL: redis://localhost:6379/0
         run: bin/rails db:test:prepare spec spec:system
 
-      - name: Keep screenshots from failed system tests
+      - name: Keep screenshots and videos from failed system tests
         uses: actions/upload-artifact@v5
         if: failure()
         with:
-          name: screenshots
-          path: ${{ github.workspace }}/tmp/screenshots
+          name: test-artifacts
+          path: |
+            ${{ github.workspace }}/tmp/capybara/screenshots
+            ${{ github.workspace }}/tmp/capybara/videos
           if-no-files-found: ignore

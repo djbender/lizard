@@ -35,13 +35,71 @@ begin
 rescue ActiveRecord::PendingMigrationError => e
   abort e.to_s.strip
 end
+
 Capybara.register_driver(:playwright) do |app|
-  Capybara::Playwright::Driver.new(app, browser_type: :chromium, headless: true)
+  Capybara::Playwright::Driver.new(
+    :app,
+    browser_type: :chromium,
+    deviceScaleFactor: 2,
+    headless: true,
+    locale: "en-US",
+    timezoneId: "America/Los_Angeles",
+    viewport: {width: 1920, height: 1080},
+    record_video_size: {width: 1920, height: 1080}
+  )
 end
 
 Capybara.javascript_driver = :playwright
 
+# Configure Capybara to save screenshots via save_path
+Capybara.save_path = Rails.root.join("tmp/capybara/screenshots")
+
+# Ensure video directory exists and clear old media (unless explicitly keeping them)
+VIDEO_DIR = Rails.root.join("tmp/capybara/videos")
+FileUtils.mkdir_p(VIDEO_DIR)
+unless ENV["CAPYBARA_KEEP_ALL"] == "true"
+  FileUtils.rm_f(Dir.glob(VIDEO_DIR.join("*.webm")))
+  FileUtils.rm_f(Dir.glob(Capybara.save_path.join("*.png")))
+end
+
+if ENV["CAPYBARA_RECORD_ALL"] == "true"
+  puts "\n🎥 CAPYBARA_RECORD_ALL enabled: saving videos for all system tests\n\n"
+end
+
 RSpec.configure do |config|
+  # Save video recordings only for failed tests (or all tests if CAPYBARA_RECORD_ALL=true)
+  config.before(:each, type: :system, js: true) do |example|
+    # Register a callback that is invoked after the test completes and the browser context closes.
+    # This callback is called during Capybara's reset_session! cleanup phase, after the video
+    # has been finalized by Playwright. At this point, example.exception is already set if the
+    # test failed, allowing us to conditionally save videos only for failures.
+    #
+    # Timeline:
+    #   1. This callback is registered before the test runs
+    #   2. Test executes
+    #   3. Capybara calls reset_session!
+    #   4. Browser context closes and video is finalized
+    #   5. This callback is invoked with the video_path
+    #   6. We check example.exception and save the video if present
+    #      or always save if CAPYBARA_RECORD_ALL=true
+    Capybara.current_session.driver.on_save_screenrecord do |video_path|
+      record_all = ENV["CAPYBARA_RECORD_ALL"] == "true"
+
+      if record_all || example.exception
+        timestamp = Time.now.strftime("%Y%m%d-%H%M%S")
+        safe_description = example.full_description.gsub(/[^0-9A-Za-z.-]/, "_")[0..100]
+        saved_video = VIDEO_DIR.join("#{safe_description}-#{timestamp}.webm")
+
+        begin
+          FileUtils.cp(video_path, saved_video)
+          puts "\n🎥 Video recording saved: #{saved_video}"
+        rescue => e
+          warn "\n⚠️  Failed to save video: #{e.message}"
+        end
+      end
+    end
+  end
+
   # Remove this line if you're not using ActiveRecord or ActiveRecord fixtures
   config.fixture_paths = [
     Rails.root.join("spec/fixtures")
