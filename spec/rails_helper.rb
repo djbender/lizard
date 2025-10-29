@@ -36,7 +36,15 @@ rescue ActiveRecord::PendingMigrationError => e
   abort e.to_s.strip
 end
 Capybara.register_driver(:playwright) do |app|
-  Capybara::Playwright::Driver.new(app, browser_type: :chromium, headless: true)
+  Capybara::Playwright::Driver.new(
+    :app,
+    browser_type: :chromium,
+    device_scale_factor: 2,
+    headless: true,
+    locale: "en-US",
+    timezoneId: "America/Los_Angeles",
+    viewport: {width: 3840, height: 2160}
+  )
 end
 
 Capybara.javascript_driver = :playwright
