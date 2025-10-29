@@ -75,9 +75,9 @@ RSpec.configure do |config|
       record_all = ENV["CAPYBARA_RECORD_ALL"] == "true"
 
       if record_all || example.exception
-        timestamp = Time.now.strftime("%Y%m%d_%H%M%S")
+        timestamp = Time.now.strftime("%Y%m%d-%H%M%S")
         safe_description = example.full_description.gsub(/[^0-9A-Za-z.-]/, "_")[0..100]
-        saved_video = VIDEO_DIR.join("#{timestamp}_#{safe_description}.webm")
+        saved_video = VIDEO_DIR.join("#{safe_description}-#{timestamp}.webm")
 
         begin
           FileUtils.cp(video_path, saved_video)
