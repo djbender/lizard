@@ -35,15 +35,17 @@ begin
 rescue ActiveRecord::PendingMigrationError => e
   abort e.to_s.strip
 end
+
 Capybara.register_driver(:playwright) do |app|
   Capybara::Playwright::Driver.new(
     :app,
     browser_type: :chromium,
-    device_scale_factor: 2,
+    deviceScaleFactor: 2,
     headless: true,
     locale: "en-US",
     timezoneId: "America/Los_Angeles",
-    viewport: {width: 3840, height: 2160}
+    viewport: {width: 1920, height: 1080},
+    record_video_size: {width: 1920, height: 1080}
   )
 end
 
@@ -52,11 +54,12 @@ Capybara.javascript_driver = :playwright
 # Configure Capybara to save screenshots via save_path
 Capybara.save_path = Rails.root.join("tmp/capybara/screenshots")
 
-# Ensure video directory exists and clear old videos (unless explicitly keeping them)
+# Ensure video directory exists and clear old media (unless explicitly keeping them)
 VIDEO_DIR = Rails.root.join("tmp/capybara/videos")
 FileUtils.mkdir_p(VIDEO_DIR)
-unless ENV["CAPYBARA_KEEP_VIDEOS"] == "true"
+unless ENV["CAPYBARA_KEEP_ALL"] == "true"
   FileUtils.rm_f(Dir.glob(VIDEO_DIR.join("*.webm")))
+  FileUtils.rm_f(Dir.glob(Capybara.save_path.join("*.png")))
 end
 
 if ENV["CAPYBARA_RECORD_ALL"] == "true"
