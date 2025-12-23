@@ -48,7 +48,7 @@ group :development, :test do
 
   gem "sqlite3", ">= 2.1"
 
-  gem "dotenv-rails", "~> 3.1"
+  gem "dotenv-rails", "~> 3.2"
 end
 
 group :development do
