@@ -1,0 +1,21 @@
+name: Retrigger CI on all Dependabot PRs
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+  pull-requests: read
+
+jobs:
+  retrigger:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: .github/actions
+      - uses: ./.github/actions/dependabot-batch
+        with:
+          command: retrigger
+          github-token: ${{ secrets.GITHUB_TOKEN }}

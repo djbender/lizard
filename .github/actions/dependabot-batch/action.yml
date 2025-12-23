@@ -1,0 +1,84 @@
+name: Dependabot Batch Action
+description: |
+  Run batch operations on all open Dependabot PRs.
+  Note: The "dependencies" label must exist in your repo for retrigger to work.
+
+inputs:
+  command:
+    description: 'Command to run: "rebase" or "retrigger"'
+    required: true
+  github-token:
+    description: 'GitHub token'
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Run batch operation on Dependabot PRs
+      uses: actions/github-script@v7
+      with:
+        github-token: ${{ inputs.github-token }}
+        script: |
+          const command = '${{ inputs.command }}';
+
+          async function rebase(prNumber) {
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: prNumber,
+              body: '@dependabot rebase'
+            });
+          }
+
+          // Remove+add label to re-trigger CI workflows listening for label events
+          async function retrigger(prNumber) {
+            await github.rest.issues.removeLabel({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: prNumber,
+              name: 'dependencies'
+            }).catch(e => console.log(`PR #${prNumber}: removeLabel skipped (${e.message})`));
+
+            await github.rest.issues.addLabels({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: prNumber,
+              labels: ['dependencies']
+            });
+          }
+
+          const commands = { rebase, retrigger };
+          const action = commands[command];
+          if (!action) {
+            core.setFailed(`Unknown command: ${command}`);
+            return;
+          }
+
+          // Paginate through all open PRs
+          const pulls = await github.paginate(github.rest.pulls.list, {
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            state: 'open',
+            per_page: 100
+          });
+
+          const dependabotPRs = pulls.filter(pr => pr.user.login === 'dependabot[bot]');
+          console.log(`Found ${dependabotPRs.length} Dependabot PRs`);
+
+          const results = await Promise.allSettled(dependabotPRs.map(async pr => {
+            await action(pr.number);
+            return pr;
+          }));
+
+          const failures = results.filter(r => r.status === 'rejected');
+
+          results.forEach(result => {
+            if (result.status === 'rejected') {
+              return console.error(`✗ ${result.reason.message}`);
+            }
+            console.log(`✓ PR #${result.value.number}: ${result.value.title}`);
+          });
+
+          if (failures.length > 0) {
+            core.setFailed(`${failures.length} PR(s) failed to process`);
+          }
