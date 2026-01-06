@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+bundle check || bundle install -j "$(nproc)"
+bin/rails db:prepare
+
+exec "$@"
