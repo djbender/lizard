@@ -78,3 +78,25 @@ bin/rails zeitwerk:check
 ```
 
 Run ./script/install-git-hooks to install Git hooks!
+
+## Deployment (Dokku)
+
+```bash
+# Initial setup on Dokku server
+dokku apps:create lizard
+dokku postgres:create lizard-db
+dokku postgres:link lizard-db lizard
+
+# Set required env vars
+dokku config:set lizard SITE_PASSWORD=password
+dokku config:set lizard SECRET_KEY_BASE=$(openssl rand -hex 64)
+
+# Add remote and deploy
+git remote add dokku dokku@dokku:lizard
+git push dokku main
+```
+
+Run migrations after deploy:
+```bash
+dokku run lizard bin/rails db:migrate
+```
