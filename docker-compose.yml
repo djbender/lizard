@@ -18,6 +18,11 @@ services:
     command: npx playwright run-server --port 3001 --host 0.0.0.0
     ports:
       - "3001:3001"
+    healthcheck:
+      test: ["CMD", "curl", "-sf", "http://localhost:3001"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
   web:
     build:
@@ -54,7 +59,7 @@ services:
       db:
         condition: service_healthy
       browser:
-        condition: service_started
+        condition: service_healthy
     environment:
       RAILS_ENV: test
       DATABASE_HOST: db
