@@ -62,6 +62,9 @@ Content-Type: application/json
 Run tests:
 ```bash
 bin/rspec
+
+# Use SQLite3 instead of PostgreSQL for tests
+DATABASE_URL=sqlite3:db/test.sqlite3 bin/rspec
 ```
 
 Lint code:

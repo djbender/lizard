@@ -40,3 +40,6 @@
 # Ignore RSpec example status file
 /spec/examples.txt
 /node_modules
+
+# SQLite databases
+*.sqlite3
