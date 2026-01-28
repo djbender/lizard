@@ -36,20 +36,33 @@ rescue ActiveRecord::PendingMigrationError => e
   abort e.to_s.strip
 end
 
-Capybara.register_driver(:playwright) do |app|
-  Capybara::Playwright::Driver.new(
-    :app,
+# Rails 6.1+ reserves :playwright, so use custom name to ensure our options apply
+Capybara.register_driver(:playwright_custom) do |app|
+  options = {
     browser_type: :chromium,
     deviceScaleFactor: 2,
     headless: true,
     locale: "en-US",
     timezoneId: "America/Los_Angeles",
-    viewport: {width: 1920, height: 1080},
-    record_video_size: {width: 1920, height: 1080}
-  )
+    viewport: {width: 1920, height: 1080}
+  }
+
+  if (server_url = ENV["PLAYWRIGHT_SERVER_URL"])
+    options[:browser_server_endpoint_url] = server_url
+  else
+    options[:record_video_size] = {width: 1920, height: 1080}
+  end
+
+  Capybara::Playwright::Driver.new(app, **options)
 end
 
-Capybara.javascript_driver = :playwright
+Capybara.javascript_driver = :playwright_custom
+
+# Remote browser needs to reach the test server; bind to 0.0.0.0 and use container hostname
+if ENV["PLAYWRIGHT_SERVER_URL"]
+  Capybara.server_host = "0.0.0.0"
+  Capybara.app_host = "http://#{ENV.fetch("HOSTNAME", "test")}"
+end
 
 # Configure Capybara to save screenshots via save_path
 Capybara.save_path = Rails.root.join("tmp/capybara/screenshots")
@@ -68,7 +81,10 @@ end
 
 RSpec.configure do |config|
   # Save video recordings only for failed tests (or all tests if CAPYBARA_RECORD_ALL=true)
+  # Video recording not supported with remote browsers
   config.before(:each, type: :system, js: true) do |example|
+    next if ENV["PLAYWRIGHT_SERVER_URL"]
+
     # Register a callback that is invoked after the test completes and the browser context closes.
     # This callback is called during Capybara's reset_session! cleanup phase, after the video
     # has been finalized by Playwright. At this point, example.exception is already set if the
@@ -113,7 +129,7 @@ RSpec.configure do |config|
   # Configure system tests to use Playwright for JavaScript tests
   config.before(:each, type: :system) do
     if RSpec.current_example.metadata[:js]
-      driven_by :playwright
+      driven_by :playwright_custom
     else
       driven_by :rack_test
     end

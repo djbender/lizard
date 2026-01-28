@@ -12,6 +12,13 @@ services:
       timeout: 5s
       retries: 5
 
+  browser:
+    # Version must match playwright-ruby-client gem in Gemfile.lock
+    image: mcr.microsoft.com/playwright:v1.58.0-jammy
+    command: npx playwright run-server --port 3001 --host 0.0.0.0
+    ports:
+      - "3001:3001"
+
   web:
     build:
       context: .
@@ -39,6 +46,22 @@ services:
       timeout: 5s
       retries: 3
       start_period: 60s
+
+  test:
+    extends:
+      service: web
+    depends_on:
+      db:
+        condition: service_healthy
+      browser:
+        condition: service_started
+    environment:
+      RAILS_ENV: test
+      DATABASE_HOST: db
+      DATABASE_USER: lizard
+      DATABASE_PASSWORD: lizard
+      PLAYWRIGHT_SERVER_URL: ws://browser:3001
+    command: ["bin/rails", "spec:system"]
 
   pghero:
     image: ankane/pghero
