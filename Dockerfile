@@ -6,7 +6,7 @@ ARG RUBY_VERSION=4.0.1
 # =============================================================================
 # Development stage (for docker-compose)
 # =============================================================================
-FROM docker.io/library/ruby:$RUBY_VERSION-slim AS dev
+FROM docker.io/library/ruby:$RUBY_VERSION AS dev
 
 WORKDIR /rails
 
