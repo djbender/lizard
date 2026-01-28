@@ -79,6 +79,19 @@ bin/rails zeitwerk:check
 
 Run ./script/install-git-hooks to install Git hooks!
 
+### Playwright Versions
+
+System tests use Playwright. These versions should align when possible:
+
+| Component              | Version | Location           |
+|------------------------|---------|--------------------|
+| playwright-ruby-client | 1.57.1  | Gemfile            |
+| playwright (npm)       | 1.57.0  | package.json       |
+| playwright (docker)    | 1.58.0  | docker-compose.yml |
+
+Currently mismatched because gem 1.57.x requires browser revision 1208 which
+ships with Playwright 1.58.0. Future releases should align all three.
+
 ## Deployment (Dokku)
 
 ```bash

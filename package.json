@@ -1,5 +1,6 @@
 {
   "devDependencies": {
+    "playwright": "see README.md 'Playwright Versions'",
     "playwright": "^1.57.0"
   }
 }

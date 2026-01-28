@@ -13,7 +13,7 @@ services:
       retries: 5
 
   browser:
-    # Version must match playwright-ruby-client gem in Gemfile.lock
+    # See README.md "Playwright Versions" for version alignment info
     image: mcr.microsoft.com/playwright:v1.58.0-jammy
     command: npx playwright run-server --port 3001 --host 0.0.0.0
     ports:
@@ -61,7 +61,7 @@ services:
       DATABASE_USER: lizard
       DATABASE_PASSWORD: lizard
       PLAYWRIGHT_SERVER_URL: ws://browser:3001
-    command: ["bin/rails", "spec:system"]
+    command: ["bin/rails", "spec"]
 
   pghero:
     image: ankane/pghero

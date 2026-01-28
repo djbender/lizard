@@ -385,6 +385,7 @@ DEPENDENCIES
   dotenv-rails (~> 3.2)
   importmap-rails
   pg (~> 1.6)
+  playwright-ruby-client (= 1.57.1)
   propshaft
   puma (>= 5.0)
   rails (~> 8.1.2)
