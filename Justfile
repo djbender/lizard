@@ -1,8 +1,8 @@
+# Load .env (buildx bake doesn't support --env-file)
+set dotenv-load
+
 # Get the current git SHA
 git_sha := `git rev-parse --short HEAD 2>/dev/null || echo "unknown"`
-
-# Extract IMAGE_NAME from docker-bake.hcl using bake --print
-image_name := `GIT_SHA={{git_sha}} docker buildx bake --print 2>/dev/null | jq -r '.target.default.tags[0]' | cut -d: -f1`
 
 # List available recipes
 default:
@@ -25,16 +25,16 @@ push:
 
 # Deploy to Dokku using SHA-tagged image
 deploy:
-    dokku git:from-image {{image_name}}:{{git_sha}}
+    dokku git:from-image $IMAGE_NAME:{{git_sha}}
 
 # Build, and deploy
 release: build push deploy
 
-# Debug: print image_name and git_sha values
+# Debug: print variable values
 debug:
     @echo "Variables:"
     @echo "  git_sha: {{git_sha}}"
-    @echo "  image_name: {{image_name}}"
+    @echo "  IMAGE_NAME: $IMAGE_NAME"
     @echo ""
     @echo "build command:"
     @echo "  GIT_SHA={{git_sha}} docker buildx bake"
@@ -43,4 +43,4 @@ debug:
     @echo "  GIT_SHA={{git_sha}} docker buildx bake --push"
     @echo ""
     @echo "deploy command:"
-    @echo "  dokku git:from-image {{image_name}}:{{git_sha}}"
+    @echo "  dokku git:from-image $IMAGE_NAME:{{git_sha}}"

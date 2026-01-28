@@ -1,11 +1,11 @@
 # Get the current git SHA
 variable "GIT_SHA" {
-  default = ""
+  default = "local"
 }
 
-# Docker image base name
+# Docker image base name (set in .env)
 variable "IMAGE_NAME" {
-  default = "registry.dokku.djbender.com/lizard"
+  default = "lizard"
 }
 
 # Default target for building multiple platforms

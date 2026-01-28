@@ -16,8 +16,6 @@ services:
     # See README.md "Playwright Versions" for version alignment info
     image: mcr.microsoft.com/playwright:v1.58.0-jammy
     command: npx playwright run-server --port 3001 --host 0.0.0.0
-    ports:
-      - "3001:3001"
     healthcheck:
       test: ["CMD", "curl", "-sf", "http://localhost:3001"]
       interval: 5s
