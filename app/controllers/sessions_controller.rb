@@ -6,7 +6,10 @@ class SessionsController < ApplicationController
   end
 
   def create
-    if params[:password] == ENV["SITE_PASSWORD"]
+    if ActiveSupport::SecurityUtils.secure_compare(
+      params[:password].to_s,
+      ENV["SITE_PASSWORD"].to_s
+    )
       session[:authenticated] = true
       session[:login_time] = Time.current
       redirect_to root_path, notice: "Successfully logged in"
