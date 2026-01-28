@@ -53,4 +53,7 @@ Rails.application.configure do
 
   # Disable site authentication in test environment
   config.disable_site_auth = true
+
+  # Disable rate limiting in test environment
+  config.rack_attack_enabled = false
 end
