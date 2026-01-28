@@ -58,7 +58,8 @@ end
 
 Capybara.javascript_driver = :playwright_custom
 
-# Remote browser needs to reach the test server; bind to 0.0.0.0 and use container hostname
+# Remote browser (Playwright container) reaches test server via Docker internal DNS.
+# Container hostname defaults to service name "test", so browser navigates to http://test:3000
 if ENV["PLAYWRIGHT_SERVER_URL"]
   Capybara.server_host = "0.0.0.0"
   Capybara.app_host = "http://#{ENV.fetch("HOSTNAME", "test")}"
