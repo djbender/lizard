@@ -92,24 +92,32 @@ System tests use Playwright. These versions should align when possible:
 Currently mismatched because gem 1.57.x requires browser revision 1208 which
 ships with Playwright 1.58.0. Future releases should align all three.
 
-## Deployment (Dokku)
+## Deployment
+
+Deploys automatically via GitHub Actions when CI passes on main. Manual deploys available via workflow dispatch or `git push dokku main`.
+
+### Dokku Server Setup
 
 ```bash
-# Initial setup on Dokku server
 dokku apps:create lizard
 dokku postgres:create lizard-db
 dokku postgres:link lizard-db lizard
 
-# Set required env vars
 dokku config:set lizard SITE_PASSWORD=password
 dokku config:set lizard SECRET_KEY_BASE=$(openssl rand -hex 64)
-
-# Add remote and deploy
-git remote add dokku dokku@dokku:lizard
-git push dokku main
 ```
 
-Run migrations after deploy:
+### GitHub Secrets Required
+
+| Secret                  | Description                        |
+|-------------------------|------------------------------------|
+| `DOKKU_HOST`            | Dokku server hostname              |
+| `DOKKU_PORT`            | SSH port                           |
+| `DOKKU_SSH_PRIVATE_KEY` | SSH private key for `dokku` user   |
+
+### Post-Deploy
+
+Migrations run automatically. Manual run if needed:
 ```bash
 dokku run lizard bin/rails db:migrate
 ```
