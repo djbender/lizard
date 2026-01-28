@@ -1,3 +1,6 @@
+# Controlled via config.rack_attack_enabled (defaults to true)
+Rack::Attack.enabled = Rails.configuration.rack_attack_enabled
+
 class Rack::Attack
   # Use memory store (no DB writes, resets on restart)
   cache.store = ActiveSupport::Cache::MemoryStore.new

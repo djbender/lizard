@@ -23,5 +23,8 @@ module Lizard
     #
     # config.time_zone = "Central Time (US & Canada)"
     # config.eager_load_paths << Rails.root.join("extras")
+
+    # Enable rate limiting
+    config.rack_attack_enabled = true
   end
 end
