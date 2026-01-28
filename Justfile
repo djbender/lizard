@@ -8,6 +8,10 @@ git_sha := `git rev-parse --short HEAD 2>/dev/null || echo "unknown"`
 default:
     @just --list
 
+# Build docker compose dev image
+verify:
+    docker compose build
+
 # Build Docker image with git SHA for AMD64 and ARM64 platforms
 build:
     GIT_SHA={{git_sha}} docker buildx bake
