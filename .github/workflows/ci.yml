@@ -6,6 +6,18 @@ on:
     branches: [ main ]
 
 jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Install just
+        uses: extractions/setup-just@v3
+
+      - name: Build docker compose
+        run: just verify
+
   scan_ruby:
     runs-on: ubuntu-latest
 
