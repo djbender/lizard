@@ -62,6 +62,9 @@ Content-Type: application/json
 Run tests:
 ```bash
 bin/rspec
+
+# Use SQLite3 instead of PostgreSQL for tests
+DATABASE_URL=sqlite3:db/test.sqlite3 bin/rspec
 ```
 
 Lint code:
@@ -75,3 +78,38 @@ bin/rails zeitwerk:check
 ```
 
 Run ./script/install-git-hooks to install Git hooks!
+
+### Playwright Versions
+
+System tests use Playwright. These versions should align when possible:
+
+| Component              | Version | Location           |
+|------------------------|---------|--------------------|
+| playwright-ruby-client | 1.57.1  | Gemfile            |
+| playwright (npm)       | 1.57.0  | package.json       |
+| playwright (docker)    | 1.58.0  | docker-compose.yml |
+
+Currently mismatched because gem 1.57.x requires browser revision 1208 which
+ships with Playwright 1.58.0. Future releases should align all three.
+
+## Deployment (Dokku)
+
+```bash
+# Initial setup on Dokku server
+dokku apps:create lizard
+dokku postgres:create lizard-db
+dokku postgres:link lizard-db lizard
+
+# Set required env vars
+dokku config:set lizard SITE_PASSWORD=password
+dokku config:set lizard SECRET_KEY_BASE=$(openssl rand -hex 64)
+
+# Add remote and deploy
+git remote add dokku dokku@dokku:lizard
+git push dokku main
+```
+
+Run migrations after deploy:
+```bash
+dokku run lizard bin/rails db:migrate
+```
