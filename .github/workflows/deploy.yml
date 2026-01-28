@@ -28,7 +28,7 @@ jobs:
           ssh-private-key: ${{ secrets.DOKKU_SSH_PRIVATE_KEY }}
 
       - name: Add Dokku to known_hosts
-        run: ssh-keyscan -H ${{ secrets.DOKKU_HOST }} >> ~/.ssh/known_hosts
+        run: ssh-keyscan -p ${{ secrets.DOKKU_PORT }} -H ${{ secrets.DOKKU_HOST }} >> ~/.ssh/known_hosts
 
       - name: Deploy to Dokku
-        run: git push dokku@${{ secrets.DOKKU_HOST }}:lizard HEAD:main --force
+        run: git push ssh://dokku@${{ secrets.DOKKU_HOST }}:${{ secrets.DOKKU_PORT }}/lizard HEAD:main --force
