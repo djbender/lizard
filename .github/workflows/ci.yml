@@ -158,7 +158,7 @@ jobs:
           DATABASE_USER: postgres
           DATABASE_PASSWORD: postgres
           # REDIS_URL: redis://localhost:6379/0
-        run: bin/rails db:test:prepare spec spec:system
+        run: bin/rails spec spec:system
 
       - name: Keep screenshots and videos from failed system tests
         uses: actions/upload-artifact@v6
