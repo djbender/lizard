@@ -152,7 +152,7 @@ GEM
     mime-types (3.7.0)
       logger
       mime-types-data (~> 3.2025, >= 3.2025.0507)
-    mime-types-data (3.2026.0127)
+    mime-types-data (3.2026.0203)
     mini_mime (1.1.5)
     minitest (6.0.1)
       prism (~> 1.5)
@@ -186,7 +186,7 @@ GEM
     pg (1.6.3-x86_64-darwin)
     pg (1.6.3-x86_64-linux)
     pg (1.6.3-x86_64-linux-musl)
-    playwright-ruby-client (1.57.1)
+    playwright-ruby-client (1.58.0)
       base64
       concurrent-ruby (>= 1.1.6)
       mime-types (>= 3.0)
@@ -387,7 +387,7 @@ DEPENDENCIES
   dotenv-rails (~> 3.2)
   importmap-rails
   pg (~> 1.6)
-  playwright-ruby-client (= 1.57.1)
+  playwright-ruby-client (= 1.58.0)
   propshaft
   puma (>= 5.0)
   rack-attack
