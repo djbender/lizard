@@ -64,7 +64,7 @@ group :test do
   # Use system testing [https://guides.rubyonrails.org/testing.html#system-testing]
   gem "capybara"
   gem "capybara-playwright-driver"
-  gem "playwright-ruby-client", "1.58.0" # see README.md "Playwright Versions"
+  gem "playwright-ruby-client", "1.58.1" # see README.md "Playwright Versions"
   gem "simplecov", require: false
   gem "sqlite3" # optional: DATABASE_URL=sqlite3:db/test.sqlite3
 end
