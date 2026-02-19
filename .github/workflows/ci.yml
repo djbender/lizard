@@ -174,7 +174,7 @@ jobs:
 
   ci:
     if: always()
-    needs: [build, scan_ruby, scan_js, lint, zeitwerk, test]
+    needs: [build, scan-ruby, scan-js, lint, zeitwerk, test]
     runs-on: ubuntu-slim
     steps:
       - if: ${{ !success() }}
