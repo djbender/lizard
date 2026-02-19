@@ -18,7 +18,8 @@ jobs:
       - name: Build docker compose
         run: just verify
 
-  scan_ruby:
+  scan-ruby:
+    name: Scan Ruby
     runs-on: ubuntu-latest
 
     steps:
@@ -34,7 +35,8 @@ jobs:
       - name: Scan for common Rails security vulnerabilities using static analysis
         run: bin/brakeman --no-pager
 
-  scan_js:
+  scan-js:
+    name: Scan JavaScript
     runs-on: ubuntu-latest
 
     steps:
@@ -169,3 +171,11 @@ jobs:
             ${{ github.workspace }}/tmp/capybara/screenshots
             ${{ github.workspace }}/tmp/capybara/videos
           if-no-files-found: ignore
+
+  ci:
+    if: always()
+    needs: [build, scan_ruby, scan_js, lint, zeitwerk, test]
+    runs-on: ubuntu-slim
+    steps:
+      - if: ${{ !success() }}
+        run: exit 1
