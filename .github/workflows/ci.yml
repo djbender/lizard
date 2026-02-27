@@ -163,7 +163,7 @@ jobs:
         run: bin/rails spec spec:system
 
       - name: Keep screenshots and videos from failed system tests
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         if: failure()
         with:
           name: test-artifacts
