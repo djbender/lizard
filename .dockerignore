@@ -52,3 +52,4 @@
 /docker-compose*.yml
 
 /CLAUDE.md
+/prometheus.yml

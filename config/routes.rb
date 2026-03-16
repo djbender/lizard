@@ -1,4 +1,6 @@
 Rails.application.routes.draw do
+  mount Yabeda::Prometheus::Exporter => "/metrics"
+
   root "dashboard#index"
 
   get "login", to: "sessions#new"
