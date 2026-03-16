@@ -42,7 +42,8 @@ RUN apt-get update -qq && \
 ENV RAILS_ENV="production" \
     BUNDLE_DEPLOYMENT="1" \
     BUNDLE_PATH="/usr/local/bundle" \
-    BUNDLE_WITHOUT="development"
+    BUNDLE_WITHOUT="development" \
+    LD_PRELOAD="libjemalloc.so.2"
 
 # Gem cache stage for shared gem caching
 FROM base AS gem-cache
