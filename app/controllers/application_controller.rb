@@ -30,7 +30,7 @@ class ApplicationController < ActionController::Base
   private
 
   def should_authenticate?
-    !request.path.start_with?("/api/") && !Rails.application.config.disable_site_auth
+    !request.path.start_with?("/api/", "/metrics") && !Rails.application.config.disable_site_auth
   end
 
   def authenticate_site
