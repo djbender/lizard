@@ -33,6 +33,9 @@ bind "tcp://0.0.0.0:#{ENV.fetch("PORT", 3000)}"
 
 # Allow puma to be restarted by `bin/rails restart` command.
 plugin :tmp_restart
+
+# Required by yabeda-puma-plugin to collect worker/thread stats
+activate_control_app
 plugin :yabeda
 
 # Run the Solid Queue supervisor inside of Puma for single-server deployments
