@@ -48,6 +48,8 @@ ENV RAILS_ENV="production" \
 # Gem cache stage for shared gem caching
 FROM base AS gem-cache
 
+ARG TARGETPLATFORM
+
 # Install packages needed to build gems and PostgreSQL client
 RUN apt-get update -qq && \
     apt-get install --no-install-recommends -y build-essential git libyaml-dev pkg-config libpq-dev && \
@@ -55,7 +57,7 @@ RUN apt-get update -qq && \
 
 # Install application gems with cache mount
 COPY Gemfile Gemfile.lock .ruby-version ./
-RUN --mount=type=cache,target=/usr/local/bundle,sharing=locked \
+RUN --mount=type=cache,id=gems-${TARGETPLATFORM},target=/usr/local/bundle,sharing=locked \
     bundle config set --local jobs $(nproc) && \
     bundle config set --local frozen true && \
     bundle install && \
@@ -68,15 +70,15 @@ FROM gem-cache AS build
 COPY . .
 
 # Precompile bootsnap code for faster boot times
-RUN --mount=type=cache,target=/usr/local/bundle,sharing=locked \
+RUN --mount=type=cache,id=gems-${TARGETPLATFORM},target=/usr/local/bundle,sharing=locked \
     bundle exec bootsnap precompile app/ lib/
 
 # Precompiling assets for production without requiring secret RAILS_MASTER_KEY
-RUN --mount=type=cache,target=/usr/local/bundle,sharing=locked \
+RUN --mount=type=cache,id=gems-${TARGETPLATFORM},target=/usr/local/bundle,sharing=locked \
     SECRET_KEY_BASE_DUMMY=1 ./bin/rails assets:precompile
 
 # Copy gems from cache for final stage
-RUN --mount=type=cache,target=/usr/local/bundle,sharing=locked \
+RUN --mount=type=cache,id=gems-${TARGETPLATFORM},target=/usr/local/bundle,sharing=locked \
     cp -r /usr/local/bundle /tmp/bundle && \
     rm -rf /tmp/bundle/ruby/*/cache /tmp/bundle/ruby/*/bundler/gems/*/.git
 
