@@ -28,6 +28,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 
+- Deploy via Docker registry (build+push in CI) instead of git push to Dokku
 - Migrated database from SQLite to PostgreSQL
 - Upgraded to Ruby 4.0.0
 - Migrated system tests from Selenium to Playwright
