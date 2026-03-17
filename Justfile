@@ -14,18 +14,18 @@ verify:
 
 # Build Docker image with git SHA for AMD64 and ARM64 platforms
 build:
-    GIT_SHA={{git_sha}} docker buildx bake
+    GIT_SHA={{git_sha}} docker buildx bake --file docker-bake.hcl
 
 # Build Docker image for ARM64 only
 build-arm:
-    GIT_SHA={{git_sha}} docker buildx bake --set '*.platform=linux/arm64'
+    GIT_SHA={{git_sha}} docker buildx bake --file docker-bake.hcl --set '*.platform=linux/arm64'
 
 # Build Docker image for AMD64 only
 build-amd:
-    GIT_SHA={{git_sha}} docker buildx bake --set '*.platform=linux/amd64'
+    GIT_SHA={{git_sha}} docker buildx bake --file docker-bake.hcl --set '*.platform=linux/amd64'
 
 push:
-    GIT_SHA={{git_sha}} docker buildx bake --push
+    GIT_SHA={{git_sha}} docker buildx bake --file docker-bake.hcl --push
 
 # Deploy to Dokku using SHA-tagged image
 deploy:
@@ -41,10 +41,10 @@ debug:
     @echo "  IMAGE_NAME: $IMAGE_NAME"
     @echo ""
     @echo "build command:"
-    @echo "  GIT_SHA={{git_sha}} docker buildx bake"
+    @echo "  GIT_SHA={{git_sha}} docker buildx bake --file docker-bake.hcl"
     @echo ""
     @echo "push command:"
-    @echo "  GIT_SHA={{git_sha}} docker buildx bake --push"
+    @echo "  GIT_SHA={{git_sha}} docker buildx bake --file docker-bake.hcl --push"
     @echo ""
     @echo "deploy command:"
     @echo "  dokku git:from-image lizard $IMAGE_NAME:{{git_sha}}"

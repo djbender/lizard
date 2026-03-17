@@ -34,7 +34,7 @@ jobs:
           password: ${{ secrets.REGISTRY_PASSWORD }}
 
       - name: Build and push
-        run: GIT_SHA=${GITHUB_SHA::7} docker buildx bake --push
+        run: GIT_SHA=${GITHUB_SHA::7} docker buildx bake --file docker-bake.hcl --push
 
       - uses: webfactory/ssh-agent@v0.10.0
         with:
