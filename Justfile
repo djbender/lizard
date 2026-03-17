@@ -29,7 +29,7 @@ push:
 
 # Deploy to Dokku using SHA-tagged image
 deploy:
-    dokku git:from-image $IMAGE_NAME:{{git_sha}}
+    dokku git:from-image lizard $IMAGE_NAME:{{git_sha}}
 
 # Build, and deploy
 release: build push deploy
@@ -47,4 +47,4 @@ debug:
     @echo "  GIT_SHA={{git_sha}} docker buildx bake --push"
     @echo ""
     @echo "deploy command:"
-    @echo "  dokku git:from-image $IMAGE_NAME:{{git_sha}}"
+    @echo "  dokku git:from-image lizard $IMAGE_NAME:{{git_sha}}"

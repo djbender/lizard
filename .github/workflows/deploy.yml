@@ -17,11 +17,24 @@ jobs:
     if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
     environment: production
 
+    env:
+      IMAGE_NAME: registry.dokku.djbender.com/lizard
+
     steps:
       - uses: actions/checkout@v6
         with:
           ref: ${{ github.event.workflow_run.head_sha || github.sha }}
-          fetch-depth: 0
+
+      - uses: docker/setup-buildx-action@v3
+
+      - uses: docker/login-action@v3
+        with:
+          registry: registry.dokku.djbender.com
+          username: ${{ secrets.REGISTRY_USERNAME }}
+          password: ${{ secrets.REGISTRY_PASSWORD }}
+
+      - name: Build and push
+        run: GIT_SHA=${GITHUB_SHA::7} docker buildx bake --push
 
       - uses: webfactory/ssh-agent@v0.10.0
         with:
@@ -31,4 +44,4 @@ jobs:
         run: ssh-keyscan -p ${{ secrets.DOKKU_PORT }} -H ${{ secrets.DOKKU_HOST }} >> ~/.ssh/known_hosts
 
       - name: Deploy to Dokku
-        run: git push ssh://dokku@${{ secrets.DOKKU_HOST }}:${{ secrets.DOKKU_PORT }}/lizard HEAD:main --force
+        run: ssh -p ${{ secrets.DOKKU_PORT }} dokku@${{ secrets.DOKKU_HOST }} git:from-image lizard ${{ env.IMAGE_NAME }}:${GITHUB_SHA::7}
