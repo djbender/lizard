@@ -15,11 +15,11 @@ jobs:
       - name: Install just
         uses: extractions/setup-just@v3
 
-      - name: Create bundle config for GitHub Packages
+      - name: Create ~/.bundle/config for GitHub Packages auth
         run: |
           mkdir -p ~/.bundle
           echo '---' > ~/.bundle/config
-          echo "BUNDLE_RUBYGEMS__PKG__GITHUB__COM: \"djbender:${{ secrets.GITHUB_TOKEN }}\"" >> ~/.bundle/config
+          echo "BUNDLE_RUBYGEMS__PKG__GITHUB__COM: \"${{ github.repository_owner }}:${{ secrets.GITHUB_TOKEN }}\"" >> ~/.bundle/config
 
       - name: Build docker compose
         run: just verify
@@ -38,7 +38,7 @@ jobs:
           ruby-version: .ruby-version
           bundler-cache: true
         env:
-          BUNDLE_RUBYGEMS__PKG__GITHUB__COM: "djbender:${{ secrets.GITHUB_TOKEN }}"
+          BUNDLE_RUBYGEMS__PKG__GITHUB__COM: "${{ github.repository_owner }}:${{ secrets.GITHUB_TOKEN }}"
 
       - name: Scan for common Rails security vulnerabilities using static analysis
         run: bin/brakeman --no-pager
@@ -57,7 +57,7 @@ jobs:
           ruby-version: .ruby-version
           bundler-cache: true
         env:
-          BUNDLE_RUBYGEMS__PKG__GITHUB__COM: "djbender:${{ secrets.GITHUB_TOKEN }}"
+          BUNDLE_RUBYGEMS__PKG__GITHUB__COM: "${{ github.repository_owner }}:${{ secrets.GITHUB_TOKEN }}"
 
       - name: Scan for security vulnerabilities in JavaScript dependencies
         run: bin/importmap audit
@@ -74,7 +74,7 @@ jobs:
           ruby-version: .ruby-version
           bundler-cache: true
         env:
-          BUNDLE_RUBYGEMS__PKG__GITHUB__COM: "djbender:${{ secrets.GITHUB_TOKEN }}"
+          BUNDLE_RUBYGEMS__PKG__GITHUB__COM: "${{ github.repository_owner }}:${{ secrets.GITHUB_TOKEN }}"
 
       - name: Lint code for consistent style
         run: bin/standardrb --format github
@@ -91,7 +91,7 @@ jobs:
           ruby-version: .ruby-version
           bundler-cache: true
         env:
-          BUNDLE_RUBYGEMS__PKG__GITHUB__COM: "djbender:${{ secrets.GITHUB_TOKEN }}"
+          BUNDLE_RUBYGEMS__PKG__GITHUB__COM: "${{ github.repository_owner }}:${{ secrets.GITHUB_TOKEN }}"
 
       - name: Check Zeitwerk eager loading
         run: bin/rails zeitwerk:check
@@ -157,7 +157,7 @@ jobs:
           ruby-version: .ruby-version
           bundler-cache: true
         env:
-          BUNDLE_RUBYGEMS__PKG__GITHUB__COM: "djbender:${{ secrets.GITHUB_TOKEN }}"
+          BUNDLE_RUBYGEMS__PKG__GITHUB__COM: "${{ github.repository_owner }}:${{ secrets.GITHUB_TOKEN }}"
 
       - name: Cache Playwright browsers
         uses: actions/cache@v5
