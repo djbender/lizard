@@ -142,6 +142,8 @@ jobs:
         with:
           ruby-version: .ruby-version
           bundler-cache: true
+        env:
+          BUNDLE_RUBYGEMS__PKG__GITHUB__COM: "djbender:${{ secrets.GITHUB_TOKEN }}"
 
       - name: Cache Playwright browsers
         uses: actions/cache@v5
@@ -160,6 +162,9 @@ jobs:
           DATABASE_USER: postgres
           DATABASE_PASSWORD: postgres
           # REDIS_URL: redis://localhost:6379/0
+          LIZARD_REPORT: "true"
+          LIZARD_API_KEY: ${{ secrets.LIZARD_API_KEY }}
+          LIZARD_URL: ${{ secrets.LIZARD_URL }}
         run: bin/rails spec spec:system
 
       - name: Keep screenshots and videos from failed system tests

@@ -26,6 +26,8 @@ services:
     build:
       context: .
       target: dev
+      secrets:
+        - bundle_config
     working_dir: /rails
     ports:
       - "3000:3000"
@@ -90,6 +92,10 @@ services:
     depends_on:
       web:
         condition: service_healthy
+
+secrets:
+  bundle_config:
+    file: ~/.bundle/config
 
 volumes:
   postgres_data:

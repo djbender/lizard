@@ -1,2 +1,4 @@
 --require spec_helper
+--require lizard
+--format Lizard::RSpecFormatter
 --tag ~type:system

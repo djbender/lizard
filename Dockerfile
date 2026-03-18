@@ -20,7 +20,8 @@ RUN <<-EOF
 EOF
 
 COPY Gemfile Gemfile.lock .ruby-version ./
-RUN bundle install -j "$(nproc)"
+RUN --mount=type=secret,id=bundle_config,target=/root/.bundle/config \
+    bundle install -j "$(nproc)"
 
 # =============================================================================
 # Production build (for Kamal)
@@ -42,7 +43,7 @@ RUN apt-get update -qq && \
 ENV RAILS_ENV="production" \
     BUNDLE_DEPLOYMENT="1" \
     BUNDLE_PATH="/usr/local/bundle" \
-    BUNDLE_WITHOUT="development" \
+    BUNDLE_WITHOUT="development:test" \
     LD_PRELOAD="libjemalloc.so.2"
 
 # Gem cache stage for shared gem caching
@@ -58,6 +59,7 @@ RUN apt-get update -qq && \
 # Install application gems with cache mount
 COPY Gemfile Gemfile.lock .ruby-version ./
 RUN --mount=type=cache,id=gems-${TARGETPLATFORM},target=/usr/local/bundle,sharing=locked \
+    --mount=type=secret,id=bundle_config,target=/root/.bundle/config \
     bundle config set --local jobs $(nproc) && \
     bundle config set --local frozen true && \
     bundle install && \
