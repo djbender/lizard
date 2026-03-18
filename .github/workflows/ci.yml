@@ -179,7 +179,7 @@ jobs:
           LIZARD_REPORT: "true"
           LIZARD_API_KEY: ${{ secrets.LIZARD_API_KEY }}
           LIZARD_URL: ${{ secrets.LIZARD_URL }}
-        run: bin/rails spec spec:system
+        run: bin/rails spec:all
 
       - name: Keep screenshots and videos from failed system tests
         uses: actions/upload-artifact@v7

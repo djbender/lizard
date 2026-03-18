@@ -2,6 +2,10 @@ require "rspec/core/rake_task"
 
 # Override the default spec:system task to explicitly include system tests
 namespace :spec do
+  desc "Run all specs (unit + system) in a single process"
+  task all: "spec:prepare" do
+    sh "bin/rspec --options .rspec_all"
+  end
   # Clear the existing task
   Rake::Task["spec:system"].clear if Rake::Task.task_defined?("spec:system")
 
