@@ -18,4 +18,7 @@ target "default" {
   args = {
     GIT_SHA = "${GIT_SHA}"
   }
+  secret = [
+    "id=bundle_config,src=${HOME}/.bundle/config"
+  ]
 }

@@ -15,6 +15,12 @@ jobs:
       - name: Install just
         uses: extractions/setup-just@v3
 
+      - name: Create ~/.bundle/config for GitHub Packages auth
+        run: |
+          mkdir -p ~/.bundle
+          echo '---' > ~/.bundle/config
+          echo "BUNDLE_RUBYGEMS__PKG__GITHUB__COM: \"${{ github.repository_owner }}:${{ secrets.GITHUB_TOKEN }}\"" >> ~/.bundle/config
+
       - name: Build docker compose
         run: just verify
 
@@ -31,6 +37,8 @@ jobs:
         with:
           ruby-version: .ruby-version
           bundler-cache: true
+        env:
+          BUNDLE_RUBYGEMS__PKG__GITHUB__COM: "${{ github.repository_owner }}:${{ secrets.GITHUB_TOKEN }}"
 
       - name: Scan for common Rails security vulnerabilities using static analysis
         run: bin/brakeman --no-pager
@@ -48,6 +56,8 @@ jobs:
         with:
           ruby-version: .ruby-version
           bundler-cache: true
+        env:
+          BUNDLE_RUBYGEMS__PKG__GITHUB__COM: "${{ github.repository_owner }}:${{ secrets.GITHUB_TOKEN }}"
 
       - name: Scan for security vulnerabilities in JavaScript dependencies
         run: bin/importmap audit
@@ -63,6 +73,8 @@ jobs:
         with:
           ruby-version: .ruby-version
           bundler-cache: true
+        env:
+          BUNDLE_RUBYGEMS__PKG__GITHUB__COM: "${{ github.repository_owner }}:${{ secrets.GITHUB_TOKEN }}"
 
       - name: Lint code for consistent style
         run: bin/standardrb --format github
@@ -78,6 +90,8 @@ jobs:
         with:
           ruby-version: .ruby-version
           bundler-cache: true
+        env:
+          BUNDLE_RUBYGEMS__PKG__GITHUB__COM: "${{ github.repository_owner }}:${{ secrets.GITHUB_TOKEN }}"
 
       - name: Check Zeitwerk eager loading
         run: bin/rails zeitwerk:check
@@ -142,6 +156,8 @@ jobs:
         with:
           ruby-version: .ruby-version
           bundler-cache: true
+        env:
+          BUNDLE_RUBYGEMS__PKG__GITHUB__COM: "${{ github.repository_owner }}:${{ secrets.GITHUB_TOKEN }}"
 
       - name: Cache Playwright browsers
         uses: actions/cache@v5
@@ -160,7 +176,17 @@ jobs:
           DATABASE_USER: postgres
           DATABASE_PASSWORD: postgres
           # REDIS_URL: redis://localhost:6379/0
-        run: bin/rails spec spec:system
+          LIZARD_REPORT: "true"
+          LIZARD_API_KEY: ${{ secrets.LIZARD_API_KEY }}
+          LIZARD_URL: ${{ secrets.LIZARD_URL }}
+        run: bin/rails spec
+
+      - name: Run system tests
+        env:
+          RAILS_ENV: test
+          DATABASE_USER: postgres
+          DATABASE_PASSWORD: postgres
+        run: bin/rails spec:system
 
       - name: Keep screenshots and videos from failed system tests
         uses: actions/upload-artifact@v7

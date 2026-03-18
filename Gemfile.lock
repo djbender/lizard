@@ -394,6 +394,11 @@ GEM
       yabeda (~> 0.8)
     zeitwerk (2.7.5)
 
+GEM
+  remote: https://rubygems.pkg.github.com/djbender/
+  specs:
+    lizard (0.1.0)
+
 PLATFORMS
   aarch64-linux
   arm64-darwin-23
@@ -414,6 +419,7 @@ DEPENDENCIES
   debug
   dotenv-rails (~> 3.2)
   importmap-rails
+  lizard!
   pg (~> 1.6)
   playwright-ruby-client (= 1.58.1)
   propshaft
