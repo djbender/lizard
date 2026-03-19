@@ -26,6 +26,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - `bin/console` for interactive debugging
 - direnv support with GIT_SHA dirty flag
 - Lizard gem for RSpec test metric reporting to lizard instance
+- Dependabot registry auth for GitHub Packages gem source
 
 ### Changed
 
