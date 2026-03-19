@@ -1,7 +1,14 @@
 version: 2
+registries:
+  github-packages:
+    type: rubygems-server
+    url: https://rubygems.pkg.github.com/djbender
+    token: ${{secrets.DEPENDABOT_GITHUB_PACKAGES_REGISTRY_TOKEN}}
 updates:
 - package-ecosystem: bundler
   directory: "/"
+  registries:
+    - github-packages
   schedule:
     interval: daily
   open-pull-requests-limit: 10
