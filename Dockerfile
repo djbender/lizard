@@ -63,7 +63,12 @@ RUN --mount=type=cache,id=gems-${TARGETPLATFORM},target=/usr/local/bundle,sharin
     bundle config set --local jobs $(nproc) && \
     bundle config set --local frozen true && \
     bundle install && \
-    bundle exec bootsnap precompile --gemfile
+    bundle exec bootsnap precompile --gemfile && \
+    cp -r /usr/local/bundle /tmp/bundle && \
+    rm -rf /tmp/bundle/ruby/*/cache /tmp/bundle/ruby/*/bundler/gems/*/.git
+
+# Persist gems into layer (cache mounts may be empty on external cache hits)
+RUN rm -rf /usr/local/bundle && mv /tmp/bundle /usr/local/bundle
 
 # Throw-away build stage to reduce size of final image
 FROM gem-cache AS build
@@ -72,23 +77,16 @@ FROM gem-cache AS build
 COPY . .
 
 # Precompile bootsnap code for faster boot times
-RUN --mount=type=cache,id=gems-${TARGETPLATFORM},target=/usr/local/bundle,sharing=locked \
-    bundle exec bootsnap precompile app/ lib/
+RUN bundle exec bootsnap precompile app/ lib/
 
 # Precompiling assets for production without requiring secret RAILS_MASTER_KEY
-RUN --mount=type=cache,id=gems-${TARGETPLATFORM},target=/usr/local/bundle,sharing=locked \
-    SECRET_KEY_BASE_DUMMY=1 ./bin/rails assets:precompile
-
-# Copy gems from cache for final stage
-RUN --mount=type=cache,id=gems-${TARGETPLATFORM},target=/usr/local/bundle,sharing=locked \
-    cp -r /usr/local/bundle /tmp/bundle && \
-    rm -rf /tmp/bundle/ruby/*/cache /tmp/bundle/ruby/*/bundler/gems/*/.git
+RUN SECRET_KEY_BASE_DUMMY=1 ./bin/rails assets:precompile
 
 # Final stage for app image
 FROM base
 
 # Copy built artifacts: gems, application
-COPY --from=build /tmp/bundle "${BUNDLE_PATH}"
+COPY --from=build /usr/local/bundle "${BUNDLE_PATH}"
 COPY --from=build /rails /rails
 
 # Run and own only the runtime files as a non-root user for security
