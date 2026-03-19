@@ -1,4 +1,10 @@
-require "rspec/core/rake_task"
+begin
+  require "rspec/core/rake_task"
+rescue LoadError
+  # rspec not available in production (BUNDLE_WITHOUT=development:test)
+end
+
+return unless defined?(RSpec)
 
 # Override the default spec:system task to explicitly include system tests
 namespace :spec do
