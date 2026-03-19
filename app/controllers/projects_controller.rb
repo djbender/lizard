@@ -48,19 +48,19 @@ class ProjectsController < ApplicationController
       datasets: [
         {
           label: "Coverage %",
-          data: @test_runs.map(&:coverage),
+          data: @test_runs.map { |r| r.coverage || 0.0 },
           borderColor: "rgb(75, 192, 192)",
           yAxisID: "y"
         },
         {
           label: "Total Specs",
-          data: @test_runs.map { |r| r.ruby_specs + r.js_specs },
+          data: @test_runs.map { |r| (r.ruby_specs || 0) + (r.js_specs || 0) },
           borderColor: "rgb(255, 99, 132)",
           yAxisID: "y1"
         },
         {
           label: "Runtime (seconds)",
-          data: @test_runs.map(&:runtime),
+          data: @test_runs.map { |r| r.runtime || 0.0 },
           borderColor: "rgb(255, 205, 86)",
           yAxisID: "y2"
         }

@@ -47,6 +47,8 @@ GEM
       erubi (~> 1.11)
       rails-dom-testing (~> 2.2)
       rails-html-sanitizer (~> 1.6)
+    active_decorator (1.5.1)
+      activesupport
     activejob (8.1.2)
       activesupport (= 8.1.2)
       globalid (>= 0.3.6)
@@ -410,6 +412,7 @@ PLATFORMS
   x86_64-linux-musl
 
 DEPENDENCIES
+  active_decorator
   bcrypt (~> 3.1.21)
   bootsnap
   brakeman

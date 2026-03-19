@@ -37,12 +37,6 @@ gem "thruster", require: false
 
 gem "pg", "~> 1.6"
 
-gem "rack-attack"
-
-gem "yabeda-prometheus", "~> 0.9"
-gem "yabeda-rails", "~> 0.9"
-gem "yabeda-puma-plugin", "~> 0.7"
-
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem "debug", platforms: %i[mri windows], require: "debug/prelude"
@@ -77,3 +71,9 @@ group :test do
     gem "lizard"
   end
 end
+
+gem "active_decorator"
+gem "rack-attack"
+gem "yabeda-prometheus", "~> 0.9"
+gem "yabeda-puma-plugin", "~> 0.7"
+gem "yabeda-rails", "~> 0.9"
