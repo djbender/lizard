@@ -28,6 +28,8 @@ services:
       target: dev
       secrets:
         - bundle_config
+    secrets:
+      - bundle_config
     working_dir: /rails
     ports:
       - "3000:3000"
@@ -40,6 +42,7 @@ services:
       DATABASE_USER: lizard
       DATABASE_PASSWORD: lizard
       SITE_PASSWORD: lizard
+      BUNDLE_USER_CONFIG: /run/secrets/bundle_config
     volumes:
       - .:/rails
       - bundle_cache:/usr/local/bundle
