@@ -38,6 +38,11 @@ cat > .git/hooks/pre-commit << 'EOF'
 
 set -euo pipefail
 
+if ! bundle check > /dev/null 2>&1; then
+  echo "⚠️  Bundle incomplete — run bundle install!"
+  exit 1
+fi
+
 echo "Running standardrb --fix..."
 
 bin/standardrb --fix
@@ -76,6 +81,11 @@ cat > .git/hooks/pre-push << 'EOF'
 # Git pre-push hook to run standardrb linter
 
 set -euo pipefail
+
+if ! bundle check > /dev/null 2>&1; then
+  echo "⚠️  Bundle incomplete — run bundle install!"
+  exit 1
+fi
 
 echo "Running standardrb before push..."
 
