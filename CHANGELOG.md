@@ -30,6 +30,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 
+- Combine bootsnap and asset precompile into single Dockerfile RUN layer
 - Parallel per-arch Docker builds with manifest merge (replaces QEMU emulation)
 - Deploy via Docker registry (build+push in CI) instead of git push to Dokku
 - Migrated database from SQLite to PostgreSQL
