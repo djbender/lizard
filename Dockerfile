@@ -85,6 +85,10 @@ FROM gem-cache AS build
 # Copy application code
 COPY . .
 
+# Write git revision for runtime version display
+ARG GIT_SHA
+RUN echo "$GIT_SHA" > REVISION
+
 # Precompile bootsnap and assets without requiring secret RAILS_MASTER_KEY
 RUN <<-EOF
   set -e

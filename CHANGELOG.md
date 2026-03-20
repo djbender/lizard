@@ -27,6 +27,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - direnv support with GIT_SHA dirty flag
 - Lizard gem for RSpec test metric reporting to lizard instance
 - Dependabot registry auth for GitHub Packages gem source
+- Bake REVISION file into Docker image from GIT_SHA build arg
 
 ### Changed
 
