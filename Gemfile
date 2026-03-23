@@ -64,6 +64,7 @@ group :test do
   gem "capybara"
   gem "capybara-playwright-driver"
   gem "playwright-ruby-client", "1.58.1" # see README.md "Playwright Versions"
+  gem "json_schemer", require: false
   gem "simplecov", require: false
   gem "sqlite3" # optional: DATABASE_URL=sqlite3:db/test.sqlite3
 

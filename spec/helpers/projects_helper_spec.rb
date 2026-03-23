@@ -33,4 +33,23 @@ RSpec.describe ProjectsHelper, type: :helper do
       expect(helper.latest_run_for_project(empty_project)).to be_nil
     end
   end
+
+  describe "#github_actions_url" do
+    it "builds run URL from repository and run_id" do
+      metadata = {"github_repository" => "djbender/lizard-ruby", "github_run_id" => "123"}
+      expect(helper.github_actions_url(metadata)).to eq("https://github.com/djbender/lizard-ruby/actions/runs/123")
+    end
+
+    it "returns nil when repository missing" do
+      expect(helper.github_actions_url({"github_run_id" => "123"})).to be_nil
+    end
+
+    it "returns nil when run_id missing" do
+      expect(helper.github_actions_url({"github_repository" => "djbender/lizard-ruby"})).to be_nil
+    end
+
+    it "returns nil for empty metadata" do
+      expect(helper.github_actions_url({})).to be_nil
+    end
+  end
 end

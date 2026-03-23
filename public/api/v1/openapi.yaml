@@ -1,0 +1,100 @@
+openapi: 3.1.0
+info:
+  title: Lizard API
+  description: Test run metrics tracking API
+  version: 1.0.0
+
+servers:
+  - url: /api/v1
+
+paths:
+  /api/v1/test_runs:
+    post:
+      summary: Create a test run
+      operationId: createTestRun
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateTestRunRequest"
+      responses:
+        "200":
+          description: Test run created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+
+  schemas:
+    CreateTestRunRequest:
+      type: object
+      required:
+        - test_run
+      properties:
+        test_run:
+          $ref: "#/components/schemas/TestRunAttributes"
+
+    TestRunAttributes:
+      type: object
+      properties:
+        commit_sha:
+          type: string
+        branch:
+          type: string
+        ruby_specs:
+          type: integer
+        js_specs:
+          type: integer
+        runtime:
+          type: number
+        coverage:
+          type: number
+        ran_at:
+          type: string
+          format: date-time
+        metadata:
+          $ref: "#/components/schemas/TestRunMetadata"
+
+    TestRunMetadata:
+      type: object
+      properties:
+        github_run_id:
+          type: string
+        github_repository:
+          type: string
+      additionalProperties: false
+
+    SuccessResponse:
+      type: object
+      required:
+        - status
+        - id
+      properties:
+        status:
+          type: string
+          const: success
+        id:
+          type: integer
+
+    ErrorResponse:
+      type: object
+      required:
+        - error
+      properties:
+        error:
+          type: string

@@ -25,8 +25,17 @@ module Api
 
       def test_run_params
         params.require(:test_run).permit(
-          :commit_sha, :branch, :ruby_specs, :js_specs,
-          :runtime, :coverage, :ran_at
+          :commit_sha,
+          :branch,
+          :ruby_specs,
+          :js_specs,
+          :runtime,
+          :coverage,
+          :ran_at,
+          metadata: [
+            :github_run_id,
+            :github_repository
+          ]
         )
       end
     end
