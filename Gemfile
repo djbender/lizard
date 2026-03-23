@@ -66,10 +66,9 @@ group :test do
   gem "playwright-ruby-client", "1.58.1" # see README.md "Playwright Versions"
   gem "json_schemer", require: false
   gem "simplecov", require: false
-  gem "sqlite3" # optional: DATABASE_URL=sqlite3:db/test.sqlite3
 
   source "https://rubygems.pkg.github.com/djbender" do
-    gem "lizard"
+    gem "lizard", "~> 0.2.0"
   end
 end
 

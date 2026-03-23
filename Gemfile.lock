@@ -337,11 +337,6 @@ GEM
     spring (4.4.2)
     spring-commands-rspec (1.0.4)
       spring (>= 0.9.1)
-    sqlite3 (2.9.2-aarch64-linux-gnu)
-    sqlite3 (2.9.2-arm64-darwin)
-    sqlite3 (2.9.2-x86_64-darwin)
-    sqlite3 (2.9.2-x86_64-linux-gnu)
-    sqlite3 (2.9.2-x86_64-linux-musl)
     standard (1.54.0)
       language_server-protocol (~> 3.17.0.2)
       lint_roller (~> 1.0)
@@ -406,7 +401,7 @@ GEM
 GEM
   remote: https://rubygems.pkg.github.com/djbender/
   specs:
-    lizard (0.1.0)
+    lizard (0.2.0)
 
 PLATFORMS
   aarch64-linux
@@ -430,7 +425,7 @@ DEPENDENCIES
   dotenv-rails (~> 3.2)
   importmap-rails
   json_schemer
-  lizard!
+  lizard (~> 0.2.0)!
   pg (~> 1.6)
   playwright-ruby-client (= 1.58.1)
   propshaft
@@ -444,7 +439,6 @@ DEPENDENCIES
   solid_queue
   spring
   spring-commands-rspec
-  sqlite3
   standard
   stimulus-rails
   thruster

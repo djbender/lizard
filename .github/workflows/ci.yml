@@ -144,7 +144,7 @@ jobs:
           echo "browsers_key=$(echo '${{ env.PLAYWRIGHT_BROWSERS }}' | tr ' ' '-')" >> $GITHUB_OUTPUT
 
       - name: Install build packages
-        run: sudo apt-get update && sudo apt-get install --no-install-recommends --yes build-essential libsqlite3-dev libyaml-dev pkg-config
+        run: sudo apt-get update && sudo apt-get install --no-install-recommends --yes build-essential libyaml-dev pkg-config
 
       - name: Install Playwright system dependencies
         run: |

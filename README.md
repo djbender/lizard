@@ -15,24 +15,15 @@ A simple Rails application for tracking test run metrics across projects.
 
 - Ruby 3.x
 - Rails 8.x
-- SQLite3
+- PostgreSQL
+- Docker and Docker Compose
 
 ### Installation
 
 1. Clone the repository
-2. Install dependencies:
+2. Start the server:
    ```bash
-   bundle install
-   ```
-
-3. Setup the database:
-   ```bash
-   bin/rails db:create db:migrate
-   ```
-
-4. Start the server:
-   ```bash
-   bin/rails server
+   docker compose up app
    ```
 
 Visit `http://localhost:3000` to access the dashboard.
@@ -80,20 +71,17 @@ A contract test in `spec/contracts/openapi_spec.rb` validates the spec against t
 
 Run tests:
 ```bash
-bin/rspec
-
-# Use SQLite3 instead of PostgreSQL for tests
-DATABASE_URL=sqlite3:db/test.sqlite3 bin/rspec
+docker compose run --rm app bin/rspec
 ```
 
 Lint code:
 ```bash
-bin/standardrb
+docker compose run --rm app bin/standardrb
 ```
 
 Check Zeitwerk loading:
 ```bash
-bin/rails zeitwerk:check
+docker compose run --rm app bin/rails zeitwerk:check
 ```
 
 Run ./script/install-git-hooks to install Git hooks!
