@@ -32,6 +32,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - OpenAPI 3.1 spec at `public/api/v1/openapi.yaml` with contract tests
 - GitHub Pages workflow to publish API spec on push to main
 - CI Run link column on project show page
+- Pagination on project test runs table via Pagy
 
 ### Changed
 

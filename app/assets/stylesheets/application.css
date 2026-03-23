@@ -66,3 +66,31 @@ nav[aria-label="breadcrumb"] a:hover {
 main {
   padding: 0;
 }
+
+.pagy {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  justify-content: center;
+}
+
+.pagy a {
+  padding: 0.4rem 0.75rem;
+  border-radius: 4px;
+  text-decoration: none;
+}
+
+.pagy a:hover:not([aria-disabled]) {
+  background: var(--accent, #0066cc);
+  color: white;
+}
+
+.pagy a[aria-current="page"] {
+  background: var(--accent, #0066cc);
+  color: white;
+}
+
+.pagy a[aria-disabled="true"] {
+  opacity: 0.5;
+  cursor: default;
+}

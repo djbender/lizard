@@ -49,40 +49,43 @@
 
 <section>
   <h2>Recent Test Runs</h2>
-  <table>
-    <thead>
-      <tr>
-        <th>Date</th>
-        <th>Branch</th>
-        <th>Ruby Specs</th>
-        <th>JS Specs</th>
-        <th>Coverage</th>
-        <th>Runtime</th>
-        <th>CI Run</th>
-        <th>Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-      <% @recent_runs.each do |run| %>
+  <%= turbo_frame_tag "test_runs" do %>
+    <table>
+      <thead>
         <tr>
-          <td><%= run.ran_at.strftime('%Y-%m-%d %H:%M') %></td>
-          <td><%= run.branch %></td>
-          <td><%= run.ruby_specs %></td>
-          <td><%= run.js_specs %></td>
-          <td><%= number_to_percentage(run.coverage, precision: 1) %></td>
-          <td><%= number_with_precision(run.runtime, precision: 1) %>s</td>
-          <td>
-            <% if (url = github_actions_url(run.metadata)) %>
-              <%= link_to run.metadata["github_run_id"], url, target: "_blank", rel: "noopener" %>
-            <% end %>
-          </td>
-          <td>
-            <%= button_to "Delete", project_test_run_path(@project, run), method: :delete, data: { turbo_confirm: "Are you sure you want to delete this test run?" } %>
-          </td>
+          <th>Date</th>
+          <th>Branch</th>
+          <th>Ruby Specs</th>
+          <th>JS Specs</th>
+          <th>Coverage</th>
+          <th>Runtime</th>
+          <th>CI Run</th>
+          <th>Actions</th>
         </tr>
-      <% end %>
-    </tbody>
-  </table>
+      </thead>
+      <tbody>
+        <% @recent_runs.each do |run| %>
+          <tr>
+            <td><%= run.ran_at.strftime('%Y-%m-%d %H:%M') %></td>
+            <td><%= run.branch %></td>
+            <td><%= run.ruby_specs %></td>
+            <td><%= run.js_specs %></td>
+            <td><%= number_to_percentage(run.coverage, precision: 1) %></td>
+            <td><%= number_with_precision(run.runtime, precision: 1) %>s</td>
+            <td>
+              <% if (url = github_actions_url(run.metadata)) %>
+                <%= link_to run.metadata["github_run_id"], url, target: "_blank", rel: "noopener" %>
+              <% end %>
+            </td>
+            <td>
+              <%= button_to "Delete", project_test_run_path(@project, run), method: :delete, data: { turbo_confirm: "Are you sure you want to delete this test run?" } %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+    <%= raw @pagy.series_nav %>
+  <% end %>
 </section>
 
 <%= javascript_import_module_tag "api_key_toggle" %>

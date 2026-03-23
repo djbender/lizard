@@ -19,7 +19,7 @@ class ProjectsController < ApplicationController
 
   def show
     @project = Project.find(params[:id])
-    @recent_runs = @project.test_runs.order(ran_at: :desc).limit(10)
+    @pagy, @recent_runs = pagy(:offset, @project.test_runs.order(ran_at: :desc), limit: 10)
   end
 
   def edit
