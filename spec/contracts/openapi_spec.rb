@@ -8,7 +8,6 @@ RSpec.describe "OpenAPI contract" do
 
   def schemer_for(schema_name)
     schema = schemas.fetch(schema_name)
-    # Inline $ref resolution against components/schemas
     resolved = resolve_refs(schema)
     JSONSchemer.schema(resolved)
   end
@@ -29,8 +28,23 @@ RSpec.describe "OpenAPI contract" do
     end
   end
 
+  matcher :validate do |payload|
+    match { |schemer| schemer.valid?(payload) }
+
+    failure_message do |schemer|
+      errors = schemer.validate(payload).map { |e|
+        "#{e["data_pointer"]}: #{e["type"]} #{e["details"]}"
+      }
+      "expected schema to validate payload, but got:\n  #{errors.join("\n  ")}"
+    end
+
+    failure_message_when_negated do |_schemer|
+      "expected schema to reject payload, but it was valid"
+    end
+  end
+
   describe "CreateTestRunRequest schema" do
-    let(:schemer) { schemer_for("CreateTestRunRequest") }
+    subject(:schemer) { schemer_for("CreateTestRunRequest") }
 
     it "validates a full payload" do
       payload = {
@@ -49,17 +63,15 @@ RSpec.describe "OpenAPI contract" do
         }
       }
 
-      expect(schemer.valid?(payload)).to be true
+      expect(schemer).to validate(payload)
     end
 
     it "validates a minimal payload" do
-      payload = {"test_run" => {}}
-
-      expect(schemer.valid?(payload)).to be true
+      expect(schemer).to validate({"test_run" => {}})
     end
 
     it "rejects missing test_run key" do
-      expect(schemer.valid?({})).to be false
+      expect(schemer).not_to validate({})
     end
 
     it "rejects unknown metadata keys" do
@@ -69,35 +81,31 @@ RSpec.describe "OpenAPI contract" do
         }
       }
 
-      expect(schemer.valid?(payload)).to be false
+      expect(schemer).not_to validate(payload)
     end
   end
 
   describe "SuccessResponse schema" do
-    let(:schemer) { schemer_for("SuccessResponse") }
+    subject(:schemer) { schemer_for("SuccessResponse") }
 
     it "validates a success response" do
-      response = {"status" => "success", "id" => 42}
-
-      expect(schemer.valid?(response)).to be true
+      expect(schemer).to validate({"status" => "success", "id" => 42})
     end
 
     it "rejects response without id" do
-      expect(schemer.valid?({"status" => "success"})).to be false
+      expect(schemer).not_to validate({"status" => "success"})
     end
   end
 
   describe "ErrorResponse schema" do
-    let(:schemer) { schemer_for("ErrorResponse") }
+    subject(:schemer) { schemer_for("ErrorResponse") }
 
     it "validates an error response" do
-      response = {"error" => "Invalid API key"}
-
-      expect(schemer.valid?(response)).to be true
+      expect(schemer).to validate({"error" => "Invalid API key"})
     end
 
     it "rejects response without error" do
-      expect(schemer.valid?({})).to be false
+      expect(schemer).not_to validate({})
     end
   end
 
