@@ -9,6 +9,7 @@ class ApplicationController < ActionController::Base
 
   clear_helpers
   helper Importmap::ImportmapTagsHelper
+  helper Turbo::FramesHelper
 
   def self.inherited(subclass)
     super
