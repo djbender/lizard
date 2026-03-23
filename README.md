@@ -43,19 +43,38 @@ Visit `http://localhost:3000` to access the dashboard.
 
 ```bash
 POST /api/v1/test_runs
+Authorization: Bearer <project-api-key>
 Content-Type: application/json
 
 {
-  "api_key": "your-project-api-key",
   "test_run": {
-    "ran_at": "2024-01-01T12:00:00Z",
-    "duration": 120.5,
-    "passed": 45,
-    "failed": 2,
-    "skipped": 1
+    "commit_sha": "abc123",
+    "branch": "main",
+    "ruby_specs": 100,
+    "js_specs": 50,
+    "runtime": 30.5,
+    "coverage": 85.2,
+    "ran_at": "2026-01-01T12:00:00Z",
+    "metadata": {
+      "github_run_id": "23419710055",
+      "github_repository": "djbender/lizard-ruby"
+    }
   }
 }
 ```
+
+### API Contract
+
+The full OpenAPI 3.1 spec lives at [`public/api/v1/openapi.yaml`](public/api/v1/openapi.yaml) and is published to [GitHub Pages](https://djbender.github.io/lizard/openapi.yaml) on every push to main.
+
+The spec guarantees:
+- **Field names and types** accepted by the API (string, integer, number, date-time)
+- **Metadata boundary** — only `github_run_id` and `github_repository` are allowed
+- **Response shapes** — `{status, id}` on success, `{error}` on failure
+- **Auth scheme** — Bearer token via `Authorization` header
+- **All fields inside `test_run` are optional** — the server accepts `{test_run: {}}` with no attributes
+
+A contract test in `spec/contracts/openapi_spec.rb` validates the spec against the actual permitted params, so CI fails if either side drifts. The [lizard-ruby](https://github.com/djbender/lizard-ruby) client gem fetches the published spec and validates its payloads against it.
 
 ## Development
 
