@@ -91,8 +91,9 @@
 <script type="module">
   import { initializeProjectChart } from "project_metrics_chart";
 
-  // Initialize the metrics chart when the page loads
-  document.addEventListener('DOMContentLoaded', function() {
+  // Initialize the metrics chart when the page loads (turbo:load fires on both
+  // full page loads and Turbo Drive navigations, unlike DOMContentLoaded)
+  document.addEventListener('turbo:load', function() {
     initializeProjectChart('<%= metrics_project_path(@project) %>');
   });
 </script>
