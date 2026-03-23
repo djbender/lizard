@@ -10,7 +10,10 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_09_14_071625) do
+ActiveRecord::Schema[8.1].define(version: 2026_03_23_160918) do
+  # These are extensions that must be enabled in order to support this database
+  enable_extension "pg_catalog.plpgsql"
+
   create_table "projects", force: :cascade do |t|
     t.string "api_key"
     t.datetime "created_at", null: false
@@ -25,6 +28,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_09_14_071625) do
     t.float "coverage"
     t.datetime "created_at", null: false
     t.integer "js_specs"
+    t.jsonb "metadata", default: {}, null: false
     t.integer "project_id", null: false
     t.datetime "ran_at"
     t.integer "ruby_specs"

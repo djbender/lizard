@@ -49,6 +49,29 @@ RSpec.describe "API V1 TestRuns", type: :request do
         expect(test_run.runtime).to eq(30.5)
         expect(test_run.coverage).to eq(85.2)
       end
+
+      it "stores github CI metadata" do
+        attrs = valid_attributes.deep_merge(
+          test_run: {metadata: {
+            github_run_id: "23419710055",
+            github_repository: "djbender/lizard-ruby"
+          }}
+        )
+        post "/api/v1/test_runs", params: attrs, headers: headers
+        test_run = TestRun.last
+
+        expect(test_run.metadata).to include(
+          "github_run_id" => "23419710055",
+          "github_repository" => "djbender/lizard-ruby"
+        )
+      end
+
+      it "defaults metadata to empty hash when not provided" do
+        post "/api/v1/test_runs", params: valid_attributes, headers: headers
+        test_run = TestRun.last
+
+        expect(test_run.metadata).to eq({})
+      end
     end
 
     context "without API key" do

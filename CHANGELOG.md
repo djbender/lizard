@@ -28,6 +28,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - Lizard gem for RSpec test metric reporting to lizard instance
 - Dependabot registry auth for GitHub Packages gem source
 - Bake REVISION file into Docker image from GIT_SHA build arg
+- `metadata` JSONB column on test_runs for GitHub CI context (run_id, repository)
+- OpenAPI 3.1 spec at `public/api/v1/openapi.yaml` with contract tests
+- GitHub Pages workflow to publish API spec on push to main
+- CI Run link column on project show page
 
 ### Changed
 

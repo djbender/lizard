@@ -58,6 +58,7 @@
         <th>JS Specs</th>
         <th>Coverage</th>
         <th>Runtime</th>
+        <th>CI Run</th>
         <th>Actions</th>
       </tr>
     </thead>
@@ -70,6 +71,11 @@
           <td><%= run.js_specs %></td>
           <td><%= number_to_percentage(run.coverage, precision: 1) %></td>
           <td><%= number_with_precision(run.runtime, precision: 1) %>s</td>
+          <td>
+            <% if (url = github_actions_url(run.metadata)) %>
+              <%= link_to run.metadata["github_run_id"], url, target: "_blank", rel: "noopener" %>
+            <% end %>
+          </td>
           <td>
             <%= button_to "Delete", project_test_run_path(@project, run), method: :delete, data: { turbo_confirm: "Are you sure you want to delete this test run?" } %>
           </td>
