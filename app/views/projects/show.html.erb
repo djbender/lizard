@@ -78,7 +78,7 @@
               <% end %>
             </td>
             <td>
-              <%= button_to "Delete", project_test_run_path(@project, run), method: :delete, data: { turbo_confirm: "Are you sure you want to delete this test run?" } %>
+              <%= button_to "Delete", project_test_run_path(@project, run), method: :delete, data: { turbo_confirm: "Are you sure you want to delete this test run?", turbo_frame: "_top" } %>
             </td>
           </tr>
         <% end %>
