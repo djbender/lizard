@@ -73,6 +73,7 @@ group :test do
 end
 
 gem "active_decorator"
+gem "pagy", "~> 43.4"
 gem "rack-attack"
 gem "yabeda-prometheus", "~> 0.9"
 gem "yabeda-puma-plugin", "~> 0.7"
