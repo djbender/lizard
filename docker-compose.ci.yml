@@ -1,0 +1,44 @@
+# CI-specific overrides: use pre-built image from GHA cache instead of rebuilding.
+# Usage: docker compose -f docker-compose.yml -f docker-compose.ci.yml run ...
+
+services:
+  app:
+    image: lizard-app:dev
+    pull_policy: never
+    build: !reset null
+    volumes: !reset
+      - .:/rails
+    entrypoint: []
+    ports: !reset []
+    healthcheck:
+      disable: true
+
+  test:
+    image: lizard-app:dev
+    pull_policy: never
+    build: !reset null
+    volumes: !reset
+      - .:/rails
+    ports: !reset []
+    healthcheck:
+      disable: true
+
+  zeitwerk:
+    image: lizard-app:dev
+    pull_policy: never
+    working_dir: /rails
+    volumes:
+      - .:/rails
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      RAILS_ENV: development
+      DATABASE_HOST: db
+      DATABASE_USER: lizard
+      DATABASE_PASSWORD: lizard
+    entrypoint: ["bin/docker-entrypoint-dev"]
+
+secrets:
+  bundle_config:
+    file: /tmp/secrets/bundle_config

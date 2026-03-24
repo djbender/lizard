@@ -5,6 +5,9 @@ on:
   push:
     branches: [ main ]
 
+env:
+  COMPOSE_FILE: docker-compose.yml:docker-compose.ci.yml
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -26,6 +29,8 @@ jobs:
         with:
           context: .
           target: dev
+          load: true
+          tags: lizard-app:dev
           push: false
           secret-files: |
             bundle_config=/tmp/secrets/bundle_config
@@ -34,167 +39,168 @@ jobs:
 
   scan-ruby:
     name: Scan Ruby
+    needs: [build]
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
 
-      - name: Set up Ruby
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: .ruby-version
-          bundler-cache: true
-        env:
-          BUNDLE_RUBYGEMS__PKG__GITHUB__COM: "${{ github.repository_owner }}:${{ secrets.GITHUB_TOKEN }}"
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v4
 
-      - name: Scan for common Rails security vulnerabilities using static analysis
-        run: bin/brakeman --no-pager
+      - name: Create bundle config
+        run: |
+          mkdir -p /tmp/secrets
+          echo '---' > /tmp/secrets/bundle_config
+          echo "BUNDLE_RUBYGEMS__PKG__GITHUB__COM: \"${{ github.repository_owner }}:${{ secrets.GITHUB_TOKEN }}\"" >> /tmp/secrets/bundle_config
+
+      - name: Load cached dev image
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          target: dev
+          load: true
+          tags: lizard-app:dev
+          push: false
+          secret-files: |
+            bundle_config=/tmp/secrets/bundle_config
+          cache-from: type=gha,scope=build-dev
+
+      - name: Scan for common Rails security vulnerabilities
+        run: docker compose run --rm --no-deps app bin/brakeman --no-pager
 
   scan-js:
     name: Scan JavaScript
+    needs: [build]
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
 
-      - name: Set up Ruby
-        uses: ruby/setup-ruby@v1
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v4
+
+      - name: Create bundle config
+        run: |
+          mkdir -p /tmp/secrets
+          echo '---' > /tmp/secrets/bundle_config
+          echo "BUNDLE_RUBYGEMS__PKG__GITHUB__COM: \"${{ github.repository_owner }}:${{ secrets.GITHUB_TOKEN }}\"" >> /tmp/secrets/bundle_config
+
+      - name: Load cached dev image
+        uses: docker/build-push-action@v7
         with:
-          ruby-version: .ruby-version
-          bundler-cache: true
-        env:
-          BUNDLE_RUBYGEMS__PKG__GITHUB__COM: "${{ github.repository_owner }}:${{ secrets.GITHUB_TOKEN }}"
+          context: .
+          target: dev
+          load: true
+          tags: lizard-app:dev
+          push: false
+          secret-files: |
+            bundle_config=/tmp/secrets/bundle_config
+          cache-from: type=gha,scope=build-dev
 
       - name: Scan for security vulnerabilities in JavaScript dependencies
-        run: bin/importmap audit
+        run: docker compose run --rm --no-deps app bin/importmap audit
 
   lint:
+    needs: [build]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
 
-      - name: Set up Ruby
-        uses: ruby/setup-ruby@v1
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v4
+
+      - name: Create bundle config
+        run: |
+          mkdir -p /tmp/secrets
+          echo '---' > /tmp/secrets/bundle_config
+          echo "BUNDLE_RUBYGEMS__PKG__GITHUB__COM: \"${{ github.repository_owner }}:${{ secrets.GITHUB_TOKEN }}\"" >> /tmp/secrets/bundle_config
+
+      - name: Load cached dev image
+        uses: docker/build-push-action@v7
         with:
-          ruby-version: .ruby-version
-          bundler-cache: true
-        env:
-          BUNDLE_RUBYGEMS__PKG__GITHUB__COM: "${{ github.repository_owner }}:${{ secrets.GITHUB_TOKEN }}"
+          context: .
+          target: dev
+          load: true
+          tags: lizard-app:dev
+          push: false
+          secret-files: |
+            bundle_config=/tmp/secrets/bundle_config
+          cache-from: type=gha,scope=build-dev
 
       - name: Lint code for consistent style
-        run: bin/standardrb --format github
+        run: docker compose run --rm --no-deps app bin/standardrb --format github
 
   zeitwerk:
+    needs: [build]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
 
-      - name: Set up Ruby
-        uses: ruby/setup-ruby@v1
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v4
+
+      - name: Create bundle config
+        run: |
+          mkdir -p /tmp/secrets
+          echo '---' > /tmp/secrets/bundle_config
+          echo "BUNDLE_RUBYGEMS__PKG__GITHUB__COM: \"${{ github.repository_owner }}:${{ secrets.GITHUB_TOKEN }}\"" >> /tmp/secrets/bundle_config
+
+      - name: Load cached dev image
+        uses: docker/build-push-action@v7
         with:
-          ruby-version: .ruby-version
-          bundler-cache: true
-        env:
-          BUNDLE_RUBYGEMS__PKG__GITHUB__COM: "${{ github.repository_owner }}:${{ secrets.GITHUB_TOKEN }}"
+          context: .
+          target: dev
+          load: true
+          tags: lizard-app:dev
+          push: false
+          secret-files: |
+            bundle_config=/tmp/secrets/bundle_config
+          cache-from: type=gha,scope=build-dev
 
       - name: Check Zeitwerk eager loading
-        run: bin/rails zeitwerk:check
+        run: docker compose run --rm zeitwerk bin/rails zeitwerk:check
 
   test:
+    needs: [build]
     runs-on: ubuntu-latest
-
-    env:
-      # to add other change the following env var to:
-      # PLAYWRIGHT_BROWSERS: chromium firefox webkit
-      PLAYWRIGHT_BROWSERS: chromium
-
-    services:
-      postgres:
-        image: postgres:18
-        ports:
-          - 5432:5432
-        env:
-          POSTGRES_DB: lizard_test
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-      # redis:
-      #   image: redis
-      #   ports:
-      #     - 6379:6379
-      #   options: --health-cmd "redis-cli ping" --health-interval 10s --health-timeout 5s --health-retries 5
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v6
-        with:
-          node-version-file: .node-version
-          cache: 'npm'
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v4
 
-      - name: Install npm dependencies
-        run: npm ci
-
-      - name: Get installed Playwright version
-        id: playwright-version
+      - name: Create bundle config
         run: |
-          echo "version=$(npx playwright --version | cut -d' ' -f2)" >> $GITHUB_OUTPUT
-          echo "browsers_key=$(echo '${{ env.PLAYWRIGHT_BROWSERS }}' | tr ' ' '-')" >> $GITHUB_OUTPUT
+          mkdir -p /tmp/secrets
+          echo '---' > /tmp/secrets/bundle_config
+          echo "BUNDLE_RUBYGEMS__PKG__GITHUB__COM: \"${{ github.repository_owner }}:${{ secrets.GITHUB_TOKEN }}\"" >> /tmp/secrets/bundle_config
 
-      - name: Install build packages
-        run: sudo apt-get update && sudo apt-get install --no-install-recommends --yes build-essential libyaml-dev pkg-config
-
-      - name: Install Playwright system dependencies
-        run: |
-          PLAYWRIGHT_INSTALL_CMD=$(npx playwright install --dry-run --with-deps ${{ env.PLAYWRIGHT_BROWSERS }} | head -1 | sed 's/^sudo -- sh -c "//' | sed 's/"$//')
-          sudo sh -c "$PLAYWRIGHT_INSTALL_CMD"
-
-      - name: Set up Ruby
-        uses: ruby/setup-ruby@v1
+      - name: Load cached dev image
+        uses: docker/build-push-action@v7
         with:
-          ruby-version: .ruby-version
-          bundler-cache: true
-        env:
-          BUNDLE_RUBYGEMS__PKG__GITHUB__COM: "${{ github.repository_owner }}:${{ secrets.GITHUB_TOKEN }}"
-
-      - name: Cache Playwright browsers
-        uses: actions/cache@v5
-        id: playwright-cache
-        with:
-          path: ~/.cache/ms-playwright
-          key: playwright-${{ runner.os }}-${{ steps.playwright-version.outputs.version }}-${{ steps.playwright-version.outputs.browsers_key }}
-
-      - name: Install Playwright browsers
-        if: steps.playwright-cache.outputs.cache-hit != 'true'
-        run: npx playwright install ${{ env.PLAYWRIGHT_BROWSERS }}
+          context: .
+          target: dev
+          load: true
+          tags: lizard-app:dev
+          push: false
+          secret-files: |
+            bundle_config=/tmp/secrets/bundle_config
+          cache-from: type=gha,scope=build-dev
 
       - name: Run tests
-        env:
-          RAILS_ENV: test
-          DATABASE_USER: postgres
-          DATABASE_PASSWORD: postgres
-          # REDIS_URL: redis://localhost:6379/0
-          LIZARD_REPORT: "true"
-          LIZARD_API_KEY: ${{ secrets.LIZARD_API_KEY }}
-          LIZARD_URL: ${{ secrets.LIZARD_URL }}
-        run: bin/rails spec
+        run: >
+          docker compose run --rm
+          -e LIZARD_REPORT=true
+          -e LIZARD_API_KEY=${{ secrets.LIZARD_API_KEY }}
+          -e LIZARD_URL=${{ secrets.LIZARD_URL }}
+          test bin/rails spec
 
       - name: Run system tests
-        env:
-          RAILS_ENV: test
-          DATABASE_USER: postgres
-          DATABASE_PASSWORD: postgres
-        run: bin/rails spec:system
+        run: docker compose run --rm test bin/rails spec:system
 
       - name: Keep screenshots and videos from failed system tests
         uses: actions/upload-artifact@v7
@@ -202,13 +208,13 @@ jobs:
         with:
           name: test-artifacts
           path: |
-            ${{ github.workspace }}/tmp/capybara/screenshots
-            ${{ github.workspace }}/tmp/capybara/videos
+            tmp/capybara/screenshots
+            tmp/capybara/videos
           if-no-files-found: ignore
 
   ci:
     if: always()
-    needs: [build, scan-ruby, scan-js, lint, zeitwerk, test]
+    needs: [scan-ruby, scan-js, lint, zeitwerk, test]
     runs-on: ubuntu-slim
     steps:
       - if: ${{ !success() }}
