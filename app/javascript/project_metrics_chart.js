@@ -1,12 +1,24 @@
 // Project Metrics Chart
 // Handles fetching and displaying project metrics using Chart.js
 
+let currentChart = null;
+
 export function initializeProjectChart(metricsUrl) {
+  const canvas = document.getElementById('metricsChart');
+  if (!canvas) return;
+
+  if (currentChart) {
+    currentChart.destroy();
+    currentChart = null;
+  }
+
   fetch(metricsUrl)
     .then(response => response.json())
     .then(data => {
-      const ctx = document.getElementById('metricsChart').getContext('2d');
-      new Chart(ctx, {
+      // Re-check canvas is still in the DOM (Turbo may have navigated away)
+      if (!document.getElementById('metricsChart')) return;
+
+      currentChart = new Chart(canvas, {
         type: 'line',
         data: data,
         options: {

@@ -91,12 +91,11 @@
 <%= javascript_import_module_tag "api_key_toggle" %>
 <%= javascript_import_module_tag "project_metrics_chart" %>
 
-<script type="module">
-  import { initializeProjectChart } from "project_metrics_chart";
-
-  // Initialize the metrics chart when the page loads (turbo:load fires on both
-  // full page loads and Turbo Drive navigations, unlike DOMContentLoaded)
-  document.addEventListener('turbo:load', function() {
+<script>
+  // Use dynamic import so this runs as a regular script (not deferred like
+  // type="module"), ensuring it executes on both initial page loads and
+  // Turbo Drive navigations.
+  import("project_metrics_chart").then(({ initializeProjectChart }) => {
     initializeProjectChart('<%= metrics_project_path(@project) %>');
   });
 </script>
