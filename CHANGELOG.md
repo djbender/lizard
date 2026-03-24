@@ -46,6 +46,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - Removed Kamal in favor of Dokku deployment
 - Extracted JavaScript into separate modules
 - Consolidated authentication to single method
+- Refactored vanilla JS (onclick handlers, inline scripts) to Stimulus controllers for API key toggle and metrics chart
 - Used full Ruby image for dev Docker stage
 
 ### Fixed
