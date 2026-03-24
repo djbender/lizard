@@ -6,7 +6,7 @@ services:
     image: lizard-app:dev
     pull_policy: never
     build: !reset null
-    volumes: !reset
+    volumes: !override
       - .:/rails
     entrypoint: []
     ports: !reset []
@@ -17,7 +17,7 @@ services:
     image: lizard-app:dev
     pull_policy: never
     build: !reset null
-    volumes: !reset
+    volumes: !override
       - .:/rails
     ports: !reset []
     healthcheck:
