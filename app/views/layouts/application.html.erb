@@ -36,11 +36,13 @@
   </header>
 
   <main>
-    <% flash.each do |type, message| %>
-      <div class="<%= type == 'notice' ? 'success' : 'error' %>">
-        <%= message %>
-      </div>
-    <% end %>
+    <div id="flash-messages">
+      <% flash.each do |type, message| %>
+        <div class="<%= type == 'notice' ? 'success' : 'error' %>">
+          <%= message %>
+        </div>
+      <% end %>
+    </div>
 
     <%= yield %>
   </main>

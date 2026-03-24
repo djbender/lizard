@@ -59,6 +59,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - CI gate job kebab-case job name references
 - Project metrics chart not rendering on Turbo Drive navigations (use `turbo:load` instead of `DOMContentLoaded`)
 - Delete button not working inside Turbo Frame (target `_top` for full-page navigation)
+- Delete test run uses Turbo Stream for in-place row removal + flash (replaces `_top` full-page reload)
 
 ### Security
 
