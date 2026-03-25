@@ -23,10 +23,25 @@ A simple Rails application for tracking test run metrics across projects.
 1. Clone the repository
 2. Start the server:
    ```bash
-   docker compose up app
+   docker compose up -d
    ```
 
 Visit `http://localhost:3000` to access the dashboard.
+
+### Docker Compose Profiles
+
+By default `docker compose up` starts only `db` and `app`. Other services are behind profiles:
+
+| Profile      | Services              |
+|--------------|-----------------------|
+| `test`       | browser, test         |
+| `monitoring` | pghero, prometheus    |
+
+```bash
+docker compose --profile test up -d           # include test services
+docker compose --profile monitoring up -d     # include monitoring
+docker compose run --rm test                  # run tests (no --profile needed)
+```
 
 ## API
 

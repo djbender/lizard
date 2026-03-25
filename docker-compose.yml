@@ -15,6 +15,7 @@ services:
   browser:
     # See README.md "Playwright Versions" for version alignment info
     image: mcr.microsoft.com/playwright:v1.58.0-jammy
+    profiles: [test]
     command: npx playwright run-server --port 3001 --host 0.0.0.0
     healthcheck:
       test: ["CMD", "curl", "-sf", "http://localhost:3001"]
@@ -42,6 +43,7 @@ services:
       DATABASE_USER: lizard
       DATABASE_PASSWORD: lizard
       SITE_PASSWORD: lizard
+      RAILS_DEVELOPMENT_HOSTS: app
       BUNDLE_USER_CONFIG: /run/secrets/bundle_config
     volumes:
       - .:/rails
@@ -49,15 +51,17 @@ services:
     entrypoint: ["bin/docker-entrypoint-dev"]
     command: ["bin/rails", "server", "-b", "0.0.0.0"]
     healthcheck:
-      test: ["CMD-SHELL", "wget -q --spider http://localhost:3000/up || exit 1"]
+      test: ["CMD-SHELL", "curl -sf http://localhost:3000/up || exit 1"]
       interval: 10s
       timeout: 5s
       retries: 3
       start_period: 60s
 
   test:
+    profiles: [test]
     extends:
       service: app
+    ports: []
     depends_on:
       db:
         condition: service_healthy
@@ -72,6 +76,7 @@ services:
     command: ["bin/rails", "spec"]
 
   pghero:
+    profiles: [monitoring]
     image: ankane/pghero
     ports:
       - "8080:8080"
@@ -87,6 +92,7 @@ services:
       retries: 3
 
   prometheus:
+    profiles: [monitoring]
     image: prom/prometheus:latest
     ports:
       - "9090:9090"
