@@ -8,5 +8,13 @@ export default class extends Controller {
   toggle() {
     this.truncatedTarget.hidden = !this.truncatedTarget.hidden
     this.fullTarget.hidden = !this.fullTarget.hidden
+
+    if (!this.fullTarget.hidden) {
+      const selection = window.getSelection()
+      const range = document.createRange()
+      range.selectNodeContents(this.fullTarget)
+      selection.removeAllRanges()
+      selection.addRange(range)
+    }
   }
 }
