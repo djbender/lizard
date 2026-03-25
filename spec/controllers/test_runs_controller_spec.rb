@@ -31,6 +31,17 @@ RSpec.describe "TestRuns", type: :request do
       expect(flash[:notice]).to eq("Test run was successfully deleted.")
     end
 
+    context "with turbo_stream format" do
+      it "removes the test run and updates flash" do
+        expect {
+          delete project_test_run_path(project, test_run), as: :turbo_stream
+        }.to change(TestRun, :count).by(-1)
+
+        expect(response.media_type).to eq("text/vnd.turbo-stream.html")
+        expect(response.body).to include("turbo-stream")
+      end
+    end
+
     context "when test run does not exist" do
       it "returns not found status" do
         delete project_test_run_path(project, 99999)
