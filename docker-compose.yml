@@ -61,6 +61,7 @@ services:
     profiles: [test]
     extends:
       service: app
+    ports: []
     depends_on:
       db:
         condition: service_healthy
