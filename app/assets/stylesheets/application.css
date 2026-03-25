@@ -35,7 +35,7 @@ body > header {
 }
 
 header nav {
-  font-size: 0.9rem;
+  font-size: 1rem;
 }
 
 header nav a {
@@ -86,6 +86,26 @@ nav[aria-label="breadcrumb"] a:hover {
 
 main {
   padding: 0;
+}
+
+meter {
+  width: 100%;
+}
+
+table {
+  white-space: nowrap;
+}
+
+section table {
+  font-size: 0.8rem;
+}
+
+td code {
+  display: inline-block;
+  max-width: 25vw;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  vertical-align: bottom;
 }
 
 .pagy {
