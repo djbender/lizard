@@ -102,10 +102,17 @@ section table {
 
 td code {
   display: inline-block;
+  vertical-align: bottom;
+}
+
+td code[data-truncate] {
   max-width: 25vw;
   overflow: hidden;
   text-overflow: ellipsis;
-  vertical-align: bottom;
+}
+
+td code[hidden] {
+  display: none;
 }
 
 .pagy {

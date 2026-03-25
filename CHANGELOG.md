@@ -52,6 +52,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Fixed
 
+- API key toggle not working (`td code { display: inline-block }` overrode `hidden` attribute)
+- Full API key truncated when revealed (scoped `max-width`/`overflow` to truncated element only)
+- Auto-select full API key text on reveal for easy copy-paste
 - `spec.rake` LoadError during Docker build when rspec unavailable in production
 - Stale `bundle_cache` volume blocking `bundle install` (runtime secret + `BUNDLE_USER_CONFIG`)
 - Timing attack vulnerability in API key comparison

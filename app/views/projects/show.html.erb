@@ -26,7 +26,7 @@
         <tr>
           <td><strong>API Key:</strong></td>
           <td data-controller="api-key-toggle">
-            <code data-api-key-toggle-target="truncated" data-action="click->api-key-toggle#toggle" style="cursor: pointer;" title="Click to reveal full API key">
+            <code data-api-key-toggle-target="truncated" data-truncate data-action="click->api-key-toggle#toggle" style="cursor: pointer;" title="Click to reveal full API key">
               <%= @project.api_key[0..10] %>...
             </code>
             <code data-api-key-toggle-target="full" data-action="click->api-key-toggle#toggle" style="cursor: pointer;" title="Click to hide API key" hidden>
