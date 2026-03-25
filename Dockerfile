@@ -6,16 +6,14 @@ ARG RUBY_VERSION=4.0.1
 # =============================================================================
 # Development stage (for docker-compose)
 # =============================================================================
-FROM docker.io/library/ruby:$RUBY_VERSION AS dev
+FROM docker.io/library/ruby:$RUBY_VERSION-slim AS dev
 
 WORKDIR /rails
 
 RUN <<-EOF
   set -e
-  apt-get update
-  apt-get install --no-install-recommends -y curl
-  curl -fsSL https://deb.nodesource.com/setup_22.x | bash -
-  apt-get install --no-install-recommends -y build-essential git libyaml-dev libpq-dev nodejs
+  apt-get update -qq
+  apt-get install --no-install-recommends -y build-essential git libyaml-dev libpq-dev
   rm -rf /var/lib/apt/lists /var/cache/apt/archives
 EOF
 
