@@ -66,6 +66,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - Project metrics chart not rendering on initial page load (deferred `<script type="module">` missed `turbo:load` event; leaked persistent listener errored on other pages)
 - Delete button not working inside Turbo Frame (target `_top` for full-page navigation)
 - Delete test run uses Turbo Stream for in-place row removal + flash (replaces `_top` full-page reload)
+- Sign-in page not respecting dark mode (hardcoded light colors, no `prefers-color-scheme` media query)
+- Failed login rendering sign-in form inside application layout (`layout false` missing `:create` action)
 
 ### Security
 

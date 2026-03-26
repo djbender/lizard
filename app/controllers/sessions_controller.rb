@@ -1,6 +1,6 @@
 class SessionsController < ApplicationController
   skip_before_action :authenticate_site, only: [:new, :create]
-  layout false, only: [:new]
+  layout false, only: [:new, :create]
 
   def new
   end
