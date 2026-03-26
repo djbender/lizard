@@ -77,6 +77,43 @@
         color: #721c24;
         border: 1px solid #f5c6cb;
       }
+      @media (prefers-color-scheme: dark) {
+        body {
+          background: #212121;
+          color: #dcdcdc;
+        }
+        .login-container {
+          background: #2b2b2b;
+          box-shadow: 0 2px 10px rgba(0,0,0,0.4);
+        }
+        .login-form h1 {
+          color: #dcdcdc;
+        }
+        label {
+          color: #aaa;
+        }
+        input[type="password"] {
+          background: #333;
+          color: #dcdcdc;
+          border-color: #555;
+        }
+        input[type="password"]:focus {
+          border-color: #ffb300;
+          box-shadow: 0 0 0 2px rgba(255,179,0,0.25);
+        }
+        .btn {
+          background: #ffb300;
+          color: #212121;
+        }
+        .btn:hover {
+          background: #ffc107;
+        }
+        .alert-danger {
+          background: #4a1c24;
+          color: #f8d7da;
+          border-color: #6b2c35;
+        }
+      }
     </style>
   </head>
   <body>
