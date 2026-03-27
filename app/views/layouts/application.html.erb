@@ -47,10 +47,12 @@
     <%= yield %>
   </main>
 
-  <footer>
-    <%= yield(:footer) if content_for?(:footer) %>
-    <p>&copy; <%= Date.current.year %> Lizard</p>
-    <p>Version: <%= GitRevision.sha %></p>
-  </footer>
+  <% unless content_for?(:no_footer) %>
+    <footer>
+      <%= yield(:footer) if content_for?(:footer) %>
+      <p>&copy; <%= Date.current.year %> Lizard</p>
+      <p>Version: <%= GitRevision.sha %></p>
+    </footer>
+  <% end %>
 </body>
 </html>
