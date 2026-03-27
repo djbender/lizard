@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1
 # check=error=true
 
-ARG RUBY_VERSION=4.0.1
+ARG RUBY_VERSION=4.0.2
 
 # =============================================================================
 # Development stage (for docker-compose)
