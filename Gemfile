@@ -75,6 +75,7 @@ end
 gem "active_decorator"
 gem "pagy", "~> 43.4"
 gem "rack-attack"
+gem "ffi"
 gem "yabeda-jemalloc"
 gem "yabeda-prometheus", "~> 0.9"
 gem "yabeda-puma-plugin", "~> 0.7"
