@@ -5,7 +5,7 @@ Yabeda.configure do
 
   collect do
     rss_pages = File.read("/proc/self/statm").split[1].to_i
-    process_resident_memory_bytes.set(rss_pages * 4096)
+    process_resident_memory_bytes.set({}, rss_pages * 4096)
   end
 end
 
