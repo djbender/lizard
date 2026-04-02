@@ -387,6 +387,8 @@ GEM
       anyway_config (>= 1.0, < 3)
       concurrent-ruby
       dry-initializer
+    yabeda-jemalloc (0.1.1)
+      yabeda (~> 0.6)
     yabeda-prometheus (0.9.1)
       prometheus-client (>= 3.0, < 5.0)
       rack
@@ -451,6 +453,7 @@ DEPENDENCIES
   turbo-rails
   tzinfo-data
   web-console
+  yabeda-jemalloc
   yabeda-prometheus (~> 0.9)
   yabeda-puma-plugin (~> 0.7)
   yabeda-rails (~> 0.9)
