@@ -53,6 +53,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Fixed
 
+- CI gate job passing when dependent jobs fail (`success()` at step level doesn't check `needs` context)
 - API key toggle not working (`td code { display: inline-block }` overrode `hidden` attribute)
 - Full API key truncated when revealed (scoped `max-width`/`overflow` to truncated element only)
 - Auto-select full API key text on reveal for easy copy-paste
