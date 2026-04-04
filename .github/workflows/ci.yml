@@ -211,5 +211,5 @@ jobs:
     needs: [build, scan-ruby, scan-js, lint, zeitwerk, test]
     runs-on: ubuntu-slim
     steps:
-      - if: ${{ !success() }}
+      - if: ${{ contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled') }}
         run: exit 1
