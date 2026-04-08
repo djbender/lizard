@@ -52,14 +52,12 @@ Yabeda.configure do
     ruby_heap_free_slots.set({}, gc[:heap_free_slots])
 
     # DB pool
-    if defined?(ActiveRecord::Base) && ActiveRecord::Base.connected?
-      pool_stat = ActiveRecord::Base.connection_pool.stat
-      rails_db_pool_size.set({}, pool_stat[:size])
-      rails_db_pool_connections.set({}, pool_stat[:connections])
-      rails_db_pool_busy.set({}, pool_stat[:busy])
-      rails_db_pool_idle.set({}, pool_stat[:idle])
-      rails_db_pool_waiting.set({}, pool_stat[:waiting])
-    end
+    pool_stat = ActiveRecord::Base.connection_pool.stat
+    rails_db_pool_size.set({}, pool_stat[:size])
+    rails_db_pool_connections.set({}, pool_stat[:connections])
+    rails_db_pool_busy.set({}, pool_stat[:busy])
+    rails_db_pool_idle.set({}, pool_stat[:idle])
+    rails_db_pool_waiting.set({}, pool_stat[:waiting])
   end
 end
 
