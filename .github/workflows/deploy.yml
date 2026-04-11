@@ -104,4 +104,12 @@ jobs:
         run: ssh-keyscan -p ${{ secrets.DOKKU_PORT }} -H ${{ secrets.DOKKU_HOST }} >> ~/.ssh/known_hosts
 
       - name: Deploy to Dokku
-        run: ssh -p ${{ secrets.DOKKU_PORT }} dokku@${{ secrets.DOKKU_HOST }} git:from-image lizard ${{ env.IMAGE_NAME }}:${{ env.GIT_SHA_SHORT }}
+        run: |
+          output=$(ssh -p ${{ secrets.DOKKU_PORT }} dokku@${{ secrets.DOKKU_HOST }} git:from-image lizard ${{ env.IMAGE_NAME }}:${{ env.GIT_SHA_SHORT }} 2>&1) && exit 0
+          if echo "$output" | grep -q "No changes detected"; then
+            echo "No changes detected, skipping deploy"
+            exit 0
+          else
+            echo "$output"
+            exit 1
+          fi
