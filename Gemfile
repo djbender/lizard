@@ -63,7 +63,7 @@ group :test do
   # Use system testing [https://guides.rubyonrails.org/testing.html#system-testing]
   gem "capybara"
   gem "capybara-playwright-driver"
-  gem "playwright-ruby-client", "1.58.1" # see README.md "Playwright Versions"
+  gem "playwright-ruby-client", "1.59.0" # see README.md "Playwright Versions"
   gem "json_schemer", require: false
   gem "simplecov", require: false
 

@@ -107,12 +107,11 @@ System tests use Playwright. These versions should align when possible:
 
 | Component              | Version | Location           |
 |------------------------|---------|--------------------|
-| playwright-ruby-client | 1.57.1  | Gemfile            |
-| playwright (npm)       | 1.57.0  | package.json       |
-| playwright (docker)    | 1.58.0  | docker-compose.yml |
+| playwright-ruby-client | 1.59.0  | Gemfile            |
+| playwright (npm)       | 1.59.1  | package.json       |
+| playwright (docker)    | 1.59.1  | docker-compose.yml |
 
-Currently mismatched because gem 1.57.x requires browser revision 1208 which
-ships with Playwright 1.58.0. Future releases should align all three.
+All three components are aligned on the 1.59.x release.
 
 ## Deployment
 
