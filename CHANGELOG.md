@@ -50,6 +50,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - Refactored vanilla JS (onclick handlers, inline scripts) to Stimulus controllers for API key toggle and metrics chart
 - Used full Ruby image for dev Docker stage
 - Sign-in page now renders within app layout (removes standalone HTML doc, reuses Simple.css + shared flash handling)
+- Capitalized CI job display names and renamed gate job from `ci` to `merge_ready` (Merge Ready)
 
 ### Fixed
 
