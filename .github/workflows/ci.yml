@@ -7,6 +7,7 @@ on:
 
 jobs:
   build:
+    name: Build
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -71,6 +72,7 @@ jobs:
         run: bin/importmap audit
 
   lint:
+    name: Lint
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -88,6 +90,7 @@ jobs:
         run: bin/standardrb --format github
 
   zeitwerk:
+    name: Zeitwerk
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -105,6 +108,7 @@ jobs:
         run: bin/rails zeitwerk:check
 
   test:
+    name: Test
     runs-on: ubuntu-latest
 
     env:
@@ -206,9 +210,10 @@ jobs:
             ${{ github.workspace }}/tmp/capybara/videos
           if-no-files-found: ignore
 
-  ci:
+  merge_ready:
+    name: Merge Ready
     if: always()
-    needs: [build, scan-ruby, scan-js, lint, zeitwerk, test]
+    needs: [test, build, lint, zeitwerk, scan-ruby, scan-js]
     runs-on: ubuntu-slim
     steps:
       - if: ${{ contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled') }}
