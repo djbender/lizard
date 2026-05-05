@@ -11,6 +11,9 @@ concurrency:
   group: deploy-production
   cancel-in-progress: false
 
+permissions:
+  contents: read
+
 env:
   IMAGE_NAME: registry.dokku.djbender.com/lizard
   GIT_SHA: ${{ github.sha }}

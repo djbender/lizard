@@ -27,12 +27,15 @@ build-amd:
 push:
     GIT_SHA={{git_sha}} docker buildx bake --file docker-bake.hcl --push
 
-# Deploy to Dokku using SHA-tagged image
+# Deploys are handled by GitHub Actions
 deploy:
-    dokku git:from-image lizard $IMAGE_NAME:{{git_sha}}
+    @echo "Deploys are handled by GitHub Actions, not the Justfile. See .github/workflows/." >&2
+    @exit 1
 
-# Build, and deploy
-release: build push deploy
+# Releases are handled by GitHub Actions
+release:
+    @echo "Releases are handled by GitHub Actions, not the Justfile. See .github/workflows/." >&2
+    @exit 1
 
 # Debug: print variable values
 debug:
@@ -45,6 +48,3 @@ debug:
     @echo ""
     @echo "push command:"
     @echo "  GIT_SHA={{git_sha}} docker buildx bake --file docker-bake.hcl --push"
-    @echo ""
-    @echo "deploy command:"
-    @echo "  dokku git:from-image lizard $IMAGE_NAME:{{git_sha}}"
