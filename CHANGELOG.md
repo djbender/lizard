@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Added
 
+- Build-time verification that `libjemalloc` is registered with the dynamic linker (fail fast if the package layout changes)
 - API endpoint for submitting test runs (`POST /api/v1/test_runs`)
 - Session-based password authentication with 24h expiry (replaced HTTP basic auth)
 - Rate limiting via Rack::Attack to prevent brute-force attacks
@@ -36,6 +37,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 
+- Bumped Ruby from 4.0.2 to 4.0.3 (`.ruby-version`, `Gemfile.lock`, Dockerfile `RUBY_VERSION` build arg)
+- Run `bin/rails db:prepare` in Dokku `predeploy` instead of `db:migrate` in `postdeploy` so the new release boots against an already-migrated schema (and creates the DB if it does not yet exist)
 - Custom DOS bitmap font (Px437_DOS-V_re_ANK24) for site-wide typography
 - Combine bootsnap and asset precompile into single Dockerfile RUN layer
 - Parallel per-arch Docker builds with manifest merge (replaces QEMU emulation)

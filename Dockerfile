@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1
 # check=error=true
 
-ARG RUBY_VERSION=4.0.2
+ARG RUBY_VERSION=4.0.3
 
 # =============================================================================
 # Development stage (for docker-compose)
@@ -38,6 +38,7 @@ RUN <<-EOF
   apt-get update -qq
   apt-get install --no-install-recommends -y curl libjemalloc2 libvips libpq5
   rm -rf /var/lib/apt/lists /var/cache/apt/archives
+  ldconfig -p | grep -q libjemalloc
 EOF
 
 # Set production environment
