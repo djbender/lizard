@@ -1,7 +1,6 @@
 module Api
   module V1
-    class TestRunsController < ApplicationController
-      skip_before_action :verify_authenticity_token
+    class TestRunsController < ActionController::API
       before_action :authenticate_project!
 
       def create
@@ -18,6 +17,7 @@ module Api
         api_key = auth_header.sub(/^Bearer\s+/, "")
         return render json: {error: "Invalid Authorization format"}, status: :unauthorized if api_key == auth_header
 
+        # TODO: use ActiveSupport::SecurityUtils.secure_compare if api_key entropy is ever reduced — current 256-bit hex makes timing attacks impractical
         @project = Project.find_by!(api_key: api_key)
       rescue ActiveRecord::RecordNotFound
         render json: {error: "Invalid API key"}, status: :unauthorized
