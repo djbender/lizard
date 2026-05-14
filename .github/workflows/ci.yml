@@ -163,9 +163,7 @@ jobs:
         run: sudo apt-get update && sudo apt-get install --no-install-recommends --yes build-essential libyaml-dev pkg-config
 
       - name: Install Playwright system dependencies
-        run: |
-          PLAYWRIGHT_INSTALL_CMD=$(npx playwright install --dry-run --with-deps ${{ env.PLAYWRIGHT_BROWSERS }} | head -1 | sed 's/^sudo -- sh -c "//' | sed 's/"$//')
-          sudo sh -c "$PLAYWRIGHT_INSTALL_CMD"
+        run: sudo npx playwright install-deps ${{ env.PLAYWRIGHT_BROWSERS }}
 
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
