@@ -192,7 +192,7 @@ GEM
       racc (~> 1.4)
     nokogiri (1.19.4-x86_64-linux-musl)
       racc (~> 1.4)
-    pagy (43.6.2)
+    pagy (43.7.0)
       json
       uri
       yaml
@@ -366,7 +366,7 @@ GEM
     unicode-display_width (3.3.0)
       unicode-emoji (~> 4.3)
     unicode-emoji (4.3.0)
-    uri (1.1.1)
+    uri (1.1.2)
     useragent (0.16.11)
     web-console (4.3.0)
       actionview (>= 8.0.0)
@@ -426,7 +426,7 @@ DEPENDENCIES
   importmap-rails
   json_schemer
   lizard (~> 0.2.0)!
-  pagy (~> 43.6)
+  pagy (~> 43.7)
   pg (~> 1.7)
   playwright-ruby-client (= 1.63.0)
   propshaft
