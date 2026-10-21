@@ -143,7 +143,7 @@ GEM
       prism (>= 1.3.0)
       rdoc (>= 4.0.0)
       reline (>= 0.4.2)
-    json (3.0.2)
+    json (3.1.0)
     json_schemer (2.5.0)
       bigdecimal
       hana (~> 1.3)
@@ -192,7 +192,7 @@ GEM
       racc (~> 1.4)
     nokogiri (1.19.4-x86_64-linux-musl)
       racc (~> 1.4)
-    pagy (43.7.0)
+    pagy (43.8.1)
       json
       uri
       yaml
@@ -426,7 +426,7 @@ DEPENDENCIES
   importmap-rails
   json_schemer
   lizard (~> 0.2.0)!
-  pagy (~> 43.7)
+  pagy (~> 43.8)
   pg (~> 1.7)
   playwright-ruby-client (= 1.63.0)
   propshaft
