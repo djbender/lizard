@@ -47,7 +47,7 @@ group :development, :test do
 
   gem "standard", require: false
 
-  gem "rspec-rails", "~> 8.0.4"
+  gem "rspec-rails", "~> 8.0.5"
 
   gem "dotenv-rails", "~> 3.2"
 end
